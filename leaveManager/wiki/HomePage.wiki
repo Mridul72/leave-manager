@@ -1,0 +1,45 @@
+---+++ Daily Shedule
+
+__preparation phase :__
+   * *01/04* : *First project meeting*
+      * description of the features expected
+      * language and technology to be employed (development platform, JEE, tomcat, MVC)
+      * project management (Gantt diagram, specifications, project wiki, open source license, versioning)
+      * *TODO* :
+         * *make some tutorials to learn Java, JEE, ajax, ...*
+         * *review open source licenses and select one*
+         * *install the development platform (eclipse, tomcat, ...)*
+         * *install a versioning system (git ?) and find a repository for project sources (Google Code ?)*
+         * *install a wiki and keeping a "diary" of the project*
+         * *install software to establish a schedule (Gantt diagram)*
+
+   * *03/04* :
+      * Review of open source licenses
+      * Installation of "planner" from repository and testing of the program to do a Gantt diagram
+      * Setup of Eclipse and Tomcat7 (EclipseTomcatSetup)
+
+   * *04/04 - 06/04* :
+      * Study of tutorials from "zero" web site :
+         * http://www.siteduzero.com/tutoriel-3-10601-apprenez-a-programmer-en-java.html
+         * http://www.siteduzero.com/tutoriel-3-112219-apprenez-a-creer-des-applications-web-dynamiques-avec-jee.html
+
+   * *09/04* :
+      * Study of a tutorial about the use of ajax with JEE :
+         * http://www.devarticles.com/c/a/Java/J2EE-and-AJAX-AJAX-with-Servlets/1/
+
+      * Setup of this wiki and start filling it (WikiSetup)
+
+
+
+
+Git
+JEE and BDD http://jmdoudoux.developpez.com/cours/developpons/java/chap-persistence.php
+JEE and Spring http://ego.developpez.com/spring/
+JEE and JUnit
+software of "leave management" : state of the art
+
+---
+
+[[Lexique]] : to remember what is what... 
+
+some things to remember for later updates of the wiki : RememberThis

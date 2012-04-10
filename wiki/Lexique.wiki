@@ -1,0 +1,45 @@
+Back to HomePage
+
+__Thanks to Wikipedia: ^^__
+
+
+
+*CRUD* : In computer programming, __create, read, update and delete__ are the four basic functions of persistent storage.
+
+DAO (Data Access Object) :
+
+*dead lock* :
+
+*EJB entity* : *Enterprise Java Bean*, CMP (Container Managed Persistance) or BMP (Bean Managed Persistance)
+
+
+*Hibernate :
+
+
+*JEE* : __Java Platform, Enterprise Edition__ or Java EE is Oracle's enterprise java computing platform. The platform provides an API and runtime environment for developing and running enterprise software, including network and web services, and other large-scale, multi-tiered, scalable, reliable, and secure network applications. Java EE extends the Java Platform, Standard Edition (Java SE)[1], providing an API for fault-tolerance, object-relational mapping, distributed and multi-tier architectures, and web services. The platform incorporates a design based largely on modular components running on an application server. Software for Java EE is primarily developed in the Java programming language and uses XML for configuration.
+
+Hierarchical database : DL1, IMS, Adabas
+
+*JDBC* : *Java DataBase Connectivity*
+
+*JDO* : *Java Data Object*
+
+*JPA* : *Java Persistence API*
+
+*lazy loading* :
+
+*mappping O/R* : *Object Relational Mapping* 
+
+*Persistence* : in computer science refers to the characteristic of state that outlives the process that created it. Without this capability, state would only exist in RAM, and would be lost when this RAM loses power, such as a computer shutdown. This is achieved in practice by storing the state as data in non-volatile storage such as a hard drive or flash memory.
+
+*ODBMS / SGBDO* :  db4objects
+
+*POJOs* : Plain Old Java Object
+
+*RDBMS / SGBDR* : MySQL, PosgreSQL, HSQLDB, Derby
+
+
+
+*Toplink* :
+
+*XDBMS* : Xindice

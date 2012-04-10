@@ -1,0 +1,9 @@
+---
+---+ Wiki of leaveManager project
+
+Eclipse:/leaveManager/wiki/images/bando_logo_ied.gif
+
+3rd year bachelor internship : 
+   * __under the direction of__ : Yohan PARENT
+   * __carried out by__ : Aline HUF
+---

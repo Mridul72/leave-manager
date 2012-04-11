@@ -10,7 +10,7 @@ __preparation phase :__
          * *review open source licenses and select one*
          * *install the development platform (eclipse, tomcat, ...)*
          * *install a versioning system (git ?) and find a repository for project sources (Google Code ?)*
-         * *install a wiki and keeping a "diary" of the project*
+         * *install a wiki and keep a "diary" of the project*
          * *install software to establish a schedule (Gantt diagram)*
 
    * *03/04* :
@@ -32,16 +32,19 @@ __preparation phase :__
    * *10/04* :
       * Creation of a google code project and setup of Git (SetupOfGit):
          * http://code.google.com/p/leave-manager/
+      * Study of a tutorial about the use of Java with databases : 
+         * http://jmdoudoux.developpez.com/cours/developpons/java/chap-persistence.php
+      * creation of a [[Lexicon]] in this wiki to remember what is what because it becomes difficult for me to assimilate all this new vocabulary ...
 
 
-Git
-JEE and BDD http://jmdoudoux.developpez.com/cours/developpons/java/chap-persistence.php
-JEE and Spring http://ego.developpez.com/spring/
-JEE and JUnit
+MEMO TODO:
+Spring http://ego.developpez.com/spring/
+JUnit
 software of "leave management" : state of the art
+Hibernate/Criteria/JPA
 
 ---
 
-[[Lexique]] : to remember what is what... 
+[[Lexicon]] : to remember what is what... 
 
 some things to remember for later updates of the wiki : RememberThis

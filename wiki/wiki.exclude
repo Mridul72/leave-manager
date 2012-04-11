@@ -3,3 +3,5 @@ PluginV33
 DataBase
 MySQL
 PosgreSQL
+JavaBeans
+TopLink

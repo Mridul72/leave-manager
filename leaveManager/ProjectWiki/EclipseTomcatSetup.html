@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+  <head>
+    <title>Eclipse Tomcat Setup</title>
+<style type="text/css"><!--
+body {
+	text-align:justify;
+	font: 10pt verdana, sans-serif; 
+	color: #000000; 
+	background: #ffffff;
+}
+
+.monospace {font-family:monospace;}
+
+.quote {
+	padding: 0.5em;
+	margin: 0 0 0.5em 0.5em;	
+	border: 1px solid #ccc;	
+	background: #eee;
+}
+
+h1,h2,h3,h4,h5,h6 {
+	font-variant: small-caps;
+	color: #111;
+}
+
+li {
+	text-align: left
+}
+
+table {
+	border-size:0;
+}
+
+th {
+	vertical-align: top;
+	color: #FFFF99;
+	background: #0c2577;
+}
+
+td {
+	vertical-align: top;
+	padding: 1px;
+	margin; 2px;
+	font: 10pt verdana, sans-serif;
+}
+
+.twikiToc {
+	margin:1em 0;
+	padding:.3em 0 .6em 0;
+}
+.twikiToc ul {
+	list-style:none;
+	padding:0 0 0 .5em;
+	margin:0;
+}
+.twikiToc li {
+	margin-left:1em;
+	padding-left:1em;
+	background-repeat:no-repeat;
+	background-position:0 .5em;
+}
+.twikiToc .twikiTocTitle {
+	margin:0;
+	padding:0;
+	font-weight:bold;
+}
+
+.twikiToc .twikiTocTitle {
+	color:#666;
+}
+
+--></style>
+  </head>
+  <body>
+<h1>Eclipse Tomcat Setup</h1>
+<hr>
+<a name="#Wiki_of_leaveManager_project"/><h1>Wiki of leaveManager project</h1>
+<p>
+</p>
+<p>
+<img alt="Eclipse:/leaveManager/wiki/images/bando_logo_ied.gif" src="workspace/leaveManager/wiki/images/bando_logo_ied.gif"/></p>
+<p>
+</p>
+<p>
+3rd year bachelor internship : </p>
+<ul><li><strong><em>under the direction of</em></strong> : Yohan PARENT</li>
+<li><strong><em>carried out by</em></strong> : Aline HUF</li>
+</ul><hr>
+<p>
+Back to <a href="HomePage.html">HomePage</a></p>
+<hr>
+<p>
+</p>
+<a name="#General_info"/><h2>General info</h2>
+<p>
+</p>
+<p>
+I have learned to my cost that for Java, nothing must be installed from the repositories. It is much easier to download the files directly on the official web sites and copy them once unzipped directly on its hard drive.</p>
+<p>
+</p>
+<a name="#Tomcat7_Setup"/><h2>Tomcat7 Setup</h2>
+<p>
+</p>
+<p>
+I've download Tomcat7 from <a href="http://tomcat.apache.org/">http://tomcat.apache.org/</a> , extract it and rename the folder tomcat7. Then I move it into <code>/opt/</code>.</p>
+<p>
+</p>
+<p>
+I need to add me as a authorized user into the file <code>tomcat7/conf/tomcat-users.xml</code></p>
+<p>
+</p>
+<p>
+<code>$ sudo nano /opt/tomcat7/conf/tomcat-users.xml</code></p>
+<p>
+</p>
+<p>
+My file looks like this (I give to root all the available rights) :</p>
+<p>
+</p>
+<pre>&lt;tomcat-users&gt;
+  &lt;role rolename=&quot;manager-gui&quot;/&gt;
+  &lt;role rolename=&quot;manager-script&quot;/&gt;
+  &lt;role rolename=&quot;manager-jmx&quot;/&gt;
+  &lt;role rolename=&quot;manager-status&quot;/&gt;
+  &lt;role rolename=&quot;admin-gui&quot;/&gt;
+  &lt;role rolename=&quot;admin-script&quot;/&gt;
+  &lt;user username=&quot;root&quot; password=&quot;root&quot; roles=&quot;manager-gui,manager-script,
+                                               manager-jmx,manager-status,
+                                               admin-gui,admin-script&quot;/&gt;
+&lt;/tomcat-users&gt;</pre><p>
+</p>
+<p>
+I've encounter some troubles due to a limit of rights onto the tomcat7 folder. To fix it I've give the <code>/opt/tomcat7</code> folder to the user group tomcat7 and add my own user account into the tomcat7 group.</p>
+<p>
+</p>
+<p>
+From there, I was able to start tomcat with <code>/opt/tomcat7/bin/startup.sh</code> and stop it with <code>/opt/tomcat7/bin/shutdown.sh</code> and I could publish the servlets into <code>/opt/tomcat7/webapps</code>.</p>
+<p>
+</p>
+<a name="#Eclipse_setup"/><h2>Eclipse setup</h2>
+<p>
+</p>
+<p>
+I've download Eclipse from <a href="http://www.eclipse.org/downloads/">http://www.eclipse.org/downloads/</a> , I've choose the version : <code>Eclipse IDE for Java EE Developers, 211 MB, linux 32bits</code>.</p>
+<p>
+</p>
+<p>
+I've extracted it into <code>/opt/</code> and add a shortcut to <code>/opt/eclipse/eclipse</code> into my home to launch it.</p>
+<p>
+</p>
+<a name="#Tomcat_plugin_for_Eclipse"/><h2>Tomcat plugin for Eclipse</h2>
+<p>
+</p>
+<p>
+The tomcat plugin for Eclipse can be found on <a href="http://www.eclipsetotale.com/tomcatPlugin.html#A3">http://www.eclipsetotale.com/tomcatPlugin.html#A3</a></p>
+<p>
+</p>
+<p>
+I've download the <code>tomcatPluginV33.zip</code> file and extracted it into eclipse/plugins/ directory and restarted Eclipse.</p>
+<p>
+</p>
+<p>
+I could immediately notice new icons to start / restart and stop the tomcat server.</p>
+<p>
+</p>
+<hr>
+  </body>
+</html>

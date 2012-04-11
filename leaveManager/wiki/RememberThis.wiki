@@ -1,0 +1,10 @@
+Back to HomePage
+
+You can embed Wiki documents in other Wiki documents using the markup Embed:OtherDocument. 
+When the document is rendered in the Browser view or is exported, the embedded document will be inlined.
+
+You can embed several external documents:
+
+Wiki documents: Embed:OtherDocument
+Eclipse resources: Embed:Eclipse:/project/file.txt
+Java source: Embed:com.foo.Bar

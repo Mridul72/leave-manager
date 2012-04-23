@@ -1,3 +1,9 @@
+
+http://code.google.com/p/leave-manager/ : sources repository
+[[Lexicon]] : to remember what is what... 
+
+---
+
 ---+++ Daily Shedule
 
 __preparation phase :__
@@ -36,15 +42,42 @@ __preparation phase :__
          * http://jmdoudoux.developpez.com/cours/developpons/java/chap-persistence.php
       * creation of a [[Lexicon]] in this wiki to remember what is what because it becomes difficult for me to assimilate all this new vocabulary ...
 
+   * *22/04* : *Second project meeting*
+      * explanations about the use of databases and Java (JDBC as connector, use of a driver to communicate with the database, ...)
+      * decision was made not to use frameworks (forget Hibernate/Criteria/JPA), but simply JDBC to understand the basics of communication between Java and the database. To avoid additional complications, it was decided to use MySQL as database.
+      * suggestion to use a pooling system to avoid repeated disconnections and connections to the database
+      * *TODO* :
+         * *make some more tutorials to understand the use of JDBC/MySQL*
+         * *make some more tutorials to understand how to use a pooling system with tomcat7 and MySQL*
+         * *make a state of the art of softwares about leave management*
+         * *find how to prevent eclipse to use tabs for indenting Java files ... (solved for other file types)
 
-MEMO TODO:
-Spring http://ego.developpez.com/spring/
-JUnit
-software of "leave management" : state of the art
-Hibernate/Criteria/JPA
+   * *23/04* :
+      * rereading of the tutorial http://jmdoudoux.developpez.com/cours/developpons/java/chap-jdbc.php#jdbc-4 in the light of the explanations of Yohan
+      * installation of missing packages, configuration and first tests with the help of https://help.ubuntu.com/community/JDBCAndMySQL
+      * summary of what has been done to use MySQL with Java : JDBCandMySQL
+      * Study of some tutorials to understand how to implement pooling (with no success) :
+         * http://www.rndblog.com/how-to-set-up-a-mysql-connection-pool-in-java/
+         * http://tomcat.apache.org/tomcat-7.0-doc/jndi-datasource-examples-howto.html
+         * http://java.sun.com/developer/technicalArticles/J2EE/pooling/
 
 ---
 
-[[Lexicon]] : to remember what is what... 
+MEMO TODO:
+pooling JDBC/MySQL ???
+state of the art
+hate tabs !!!
+
+JUnit
+
+QUESTIONS :
+why adding /usr/share/java/mysql-connector-java.jar into Eclipse ?
+is the .classpath file only used by eclipse or by tomcat too ?
+in order to deploy the webapp on a server, is it not better to put the mysql-connector-java.jar into tomcat7/lib directory ?
+
+
+for personal culture :
+Spring http://ego.developpez.com/spring/
+swing for server part / gwt for web interface ?
 
 some things to remember for later updates of the wiki : RememberThis

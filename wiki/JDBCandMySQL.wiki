@@ -1,0 +1,151 @@
+Back to HomePage
+
+As explained in https://help.ubuntu.com/community/JDBCAndMySQL I have installed some packages :
+   * =sudo apt-get install mysql-server=
+   * =sudo apt-get install mysql-client=
+   * =sudo apt-get install libmysql-java=
+
+Then I have created a database to use with Java (leaveManagerDB) and created a user with access to that table with :
+   * =grant all privileges on [database].* to [user]@localhost identified by "[password]";=
+   * =flush privileges;=
+
+Apparently, with tomcat7 and MySQL 5.1.61 it's not necessary to add CLASSPATH=".:/usr/share/java/mysql.jar" into /etc/environment ...
+But it's necessary to add /usr/share/java/mysql-connector-java.jar into Eclipse : into Properties/Java Build Path, and Libraries tab.
+
+QUESTIONS :
+   * why adding /usr/share/java/mysql-connector-java.jar into Eclipse ?
+   * is the .classpath file only used by eclipse or by tomcat too ?
+   * in order to deploy the webapp on a server, is it not better to put the mysql-connector-java.jar into tomcat7/lib directory ?
+
+Then I've done my first steps to test what is explained in http://jmdoudoux.developpez.com/cours/developpons/java/chap-jdbc.php#jdbc-6-3 :
+
+<verbatim>
+    package dao;
+    
+    import java.sql.*;
+    import java.util.Properties;
+    
+    public class BddAccess {
+    
+      private static void affiche(String message) {
+        System.out.println(message);
+      }
+    
+      private static void arret(String message) {
+        System.err.println(message);
+        System.exit(99);
+      }
+      
+      public static void main(java.lang.String[] args) {
+         Connection c = null;
+         Statement stmt = null;
+         String requete = "";
+         int nbMaj = 0;
+         ResultSet résultats = null;
+         
+         // chargement du pilote
+    
+         try {
+           Class.forName("com.mysql.jdbc.Driver");
+         } catch (ClassNotFoundException e) {
+           arret("Impossible de charger le pilote jdbc:mysql");
+         }
+    
+         //connection a la base de données
+    
+         affiche("connexion a la base de données");
+         try {
+            String DBurl = "jdbc:mysql://127.0.0.1/leaveManagerDB";
+            Properties p = new Properties();
+            p.put("user","alinehuf");
+            p.put("password","secret");
+            c = DriverManager.getConnection(DBurl, p);
+         } catch (SQLException e) {
+            arret("Connection à la base de données impossible");
+         }
+         
+         //test table existe
+         affiche("articles existe ?");
+         requete = "DESCRIBE articles";
+         
+         try {
+            
+            stmt = c.createStatement();
+            nbMaj = stmt.executeUpdate(requete);
+            if (nbMaj == 0) {
+              
+              //creation d'une table articles 
+              
+              affiche("non, création de la table articles.");
+              requete = "CREATE TABLE articles (" +
+                        "  id INT(5) not null AUTO_INCREMENT," +
+                        "  article CHAR(10)," +
+                        "  nombre INT(5)," +
+                        "  PRIMARY KEY(id))";
+              
+              try {
+                stmt = c.createStatement();
+                // pour un traitement de type DDL (Data Definition Langage : 
+                // définition de données) comme la création d'une table, 
+                // executeUpdate retourne 0
+                stmt.executeUpdate(requete);
+              } catch (SQLException e) {
+                  e.printStackTrace();
+              }
+              // fin creation d'une table articles
+              
+            } else affiche("oui");
+         } catch (SQLException e) {
+             e.printStackTrace();
+         }
+         
+         //insertion d'un enregistrement dans la table articles 
+    
+         affiche("creation enregistrement");
+    
+         requete = "INSERT INTO articles VALUES (null, 'passoire', 4)";
+         try {
+            stmt = c.createStatement();
+            nbMaj = stmt.executeUpdate(requete);
+            affiche("nb mise a jour = "+nbMaj);
+         } catch (SQLException e) {
+             e.printStackTrace();
+         }
+         
+         //creation et execution de la requete
+    
+         affiche("creation et execution de la requête");
+         requete = "SELECT * FROM articles";
+    
+         try {
+            stmt = c.createStatement();
+            résultats = stmt.executeQuery(requete);
+         } catch (SQLException e) {
+            arret("Anomalie lors de l'execution de la requête");
+         }
+         
+         //parcours des données retournées
+    
+         affiche("parcours des données retournées");
+         try {
+            ResultSetMetaData rsmd = résultats.getMetaData();
+            int nbCols = rsmd.getColumnCount();
+            boolean encore = résultats.next();
+    
+            while (encore) {
+               for (int i = 1; i <= nbCols; i++)
+                  System.out.print(résultats.getString(i) + " ");
+               System.out.println();
+               encore = résultats.next();
+            }
+    
+            résultats.close();
+         } catch (SQLException e) {
+            arret(e.getMessage());
+         }
+    
+         affiche("fin du programme");
+         System.exit(0);
+      }
+    }
+</verbatim>

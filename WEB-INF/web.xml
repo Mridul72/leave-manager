@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="Utf-8"?>
+<!--
+Author : AlineHUF
+Email : alinehuf@gmail.com
+Licence : GNU-GPL v.3
+Release date : 06/2012
+-->
+<web-app xmlns="http://java.sun.com/xml/ns/javaee"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+                      http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+  version="3.0"
+  metadata-complete="true">
+ 
+   <resource-ref>
+      <description>DB Connection Pool</description>
+      <res-ref-name>jdbc/leaveManagerDB</res-ref-name>
+      <res-type>javax.sql.DataSource</res-type>
+      <res-auth>Container</res-auth>
+      <res-sharing-scope>Shareable</res-sharing-scope>
+   </resource-ref>
+
+  <servlet>
+    <servlet-class>servlet.SHome</servlet-class>
+    <servlet-name>SHome</servlet-name>
+  </servlet>
+  
+  <servlet>
+    <servlet-class>servlet.SLogin</servlet-class>
+    <servlet-name>SLogin</servlet-name>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>SHome</servlet-name>
+    <url-pattern>/showhome.do</url-pattern>
+  </servlet-mapping>
+  
+  <servlet-mapping>
+    <servlet-name>SLogin</servlet-name>
+    <url-pattern>/checklogin.do</url-pattern>
+  </servlet-mapping>
+</web-app>

@@ -8,5 +8,6 @@
 	<classpathentry kind="var" path="TOMCAT_HOME/lib/annotations-api.jar"/>
 	<classpathentry kind="src" path="WEB-INF/src"/>
 	<classpathentry kind="src" output="work" path="work"/>
+	<classpathentry kind="lib" path="/opt/eclipse/plugins/org.junit_4.8.2.v4_8_2_v20110321-1705/junit.jar"/>
 	<classpathentry kind="output" path="WEB-INF/classes"/>
 </classpath>

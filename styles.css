@@ -1,0 +1,6 @@
+@CHARSET "UTF-8";
+
+li .selected {
+  color: #FF0000;
+  font-size:18px;
+}

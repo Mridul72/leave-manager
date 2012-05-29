@@ -1,49 +1,123 @@
 package model;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import java.sql.Date;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import dao.DbAccessWithPooling;
 
 public class User {
+  String user_id;
+  String user_name;
+  String user_surname;
+  String gender;
+  String email;
+  Date taking_office;
+  Date termination;
+  int replacement;
+  int group;
+  int team;
   
-  public static boolean checkPassword(String login, String password) {
-    // acces database to check identifiers
+  public User(String login) throws SQLException {
     DbAccessWithPooling dbaccess = new DbAccessWithPooling();
-    String pass = dbaccess.getPassword(login);
-    // if login/pass found, return true
-    if (getMD5(password).equals(pass)) return true;
-    else return false;
-  }
-  
-  /**
-   * Give MD5 encoding of a string.
-   *
-   * Use {@link #getMD5(String)} to encode.
-   *
-   * @param password string to be encoded
-   * @return         the encoded string as a string
-   */
-  private static String getMD5(String password) {
-    byte[] uniqueKey = password.getBytes();
-    byte[] hash      = null;
-    
+    String query = "SELECT * FROM users WHERE login='"+ login + "'";
+    ResultSet rset = dbaccess.askResultSet(query);
     try {
-      hash = MessageDigest.getInstance("MD5").digest(uniqueKey);
-    } catch (NoSuchAlgorithmException e) {
-      throw new Error("No MD5 support in this VM.");
+      user_id = rset.getString("user_id");
+      user_name = rset.getString("user_name");
+      user_surname = rset.getString("surname");
+      gender = rset.getString("gender");
+      email = rset.getString("email");
+      taking_office = rset.getDate("taking_office");
+      termination = rset.getDate("termination");
+      replacement = rset.getInt("replacement_sid");
+      group = rset.getInt("group_sid");
+      team = rset.getInt("team_sid");
+    } catch (SQLException ex) {
+      System.err.println(ex.getMessage());
+    } finally {
+      dbaccess.freeResultSet();
     }
-    
-    StringBuilder hashString = new StringBuilder();
-    for (int i = 0; i < hash.length; i++) {
-      String hex = Integer.toHexString(hash[i]);
-      if (hex.length() == 1) {
-        hashString.append('0');
-        hashString.append(hex.charAt(hex.length() - 1));
-      } else hashString.append(hex.substring(hex.length() - 2));
-    }
-    
-    return hashString.toString();
   }
   
+  public String getUser_id() {
+    return user_id;
+  }
+
+  public void setUser_id(String user_id) {
+    this.user_id = user_id;
+  }
+
+  public String getUser_name() {
+    return user_name;
+  }
+
+  public void setUser_name(String user_name) {
+    this.user_name = user_name;
+  }
+
+  public String getUser_surname() {
+    return user_surname;
+  }
+
+  public void setUser_surname(String user_surname) {
+    this.user_surname = user_surname;
+  }
+
+  public String getGender() {
+    return gender;
+  }
+
+  public void setGender(String gender) {
+    this.gender = gender;
+  }
+
+  public String getEmail() {
+    return email;
+  }
+
+  public void setEmail(String email) {
+    this.email = email;
+  }
+
+  public Date getTaking_office() {
+    return taking_office;
+  }
+
+  public void setTaking_office(Date taking_office) {
+    this.taking_office = taking_office;
+  }
+
+  public Date getTermination() {
+    return termination;
+  }
+
+  public void setTermination(Date termination) {
+    this.termination = termination;
+  }
+
+  public int getReplacement() {
+    return replacement;
+  }
+
+  public void setReplacement(int replacement) {
+    this.replacement = replacement;
+  }
+
+  public int getGroup() {
+    return group;
+  }
+
+  public void setGroup(int group) {
+    this.group = group;
+  }
+
+  public int getTeam() {
+    return team;
+  }
+
+  public void setTeam(int team) {
+    this.team = team;
+  }
+
 }

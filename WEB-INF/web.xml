@@ -11,18 +11,49 @@ Release date : 06/2012
                       http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
   version="3.0"
   metadata-complete="true">
- 
-   <resource-ref>
-      <description>DB Connection Pool</description>
-      <res-ref-name>jdbc/leaveManagerDB</res-ref-name>
-      <res-type>javax.sql.DataSource</res-type>
-      <res-auth>Container</res-auth>
-      <res-sharing-scope>Shareable</res-sharing-scope>
-   </resource-ref>
+
+  <resource-ref>
+    <description>DB Connection Pool</description>
+    <res-ref-name>jdbc/leaveManagerDB</res-ref-name>
+    <res-type>javax.sql.DataSource</res-type>
+    <res-auth>Container</res-auth>
+    <res-sharing-scope>Shareable</res-sharing-scope>
+  </resource-ref>
+
+  <security-constraint>
+    <display-name>SecureConnection</display-name>
+    <web-resource-collection>
+      <web-resource-name>SecureConnection</web-resource-name>
+      <url-pattern>/truc</url-pattern>
+      <!--  <url-pattern>/showhome.do</url-pattern> -->
+      <http-method>GET</http-method>
+      <http-method>POST</http-method>
+    </web-resource-collection>
+    <user-data-constraint>
+      <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+    </user-data-constraint>
+  </security-constraint>
+
+<filter>
+    <filter-name>FLogin</filter-name>
+    <filter-class>filter.FLogin</filter-class>
+    <init-param>
+      <param-name>avoid-urls</param-name>
+      <param-value>/index.jsp,/checklogin.do</param-value>
+    </init-param>
+  </filter>
+
+  <filter-mapping>
+    <filter-name>FLogin</filter-name>
+    <url-pattern>/*</url-pattern>
+    <dispatcher>REQUEST</dispatcher>
+    <dispatcher>FORWARD</dispatcher>
+    <dispatcher>INCLUDE</dispatcher>
+  </filter-mapping>
 
   <servlet>
-    <servlet-class>servlet.SHome</servlet-class>
-    <servlet-name>SHome</servlet-name>
+    <servlet-class>servlet.SUserStats</servlet-class>
+    <servlet-name>SUserStats</servlet-name>
   </servlet>
   
   <servlet>
@@ -31,7 +62,8 @@ Release date : 06/2012
   </servlet>
 
   <servlet-mapping>
-    <servlet-name>SHome</servlet-name>
+    <servlet-name>SUserStats</servlet-name>
+    <url-pattern>/userstats.do</url-pattern>
     <url-pattern>/showhome.do</url-pattern>
   </servlet-mapping>
   

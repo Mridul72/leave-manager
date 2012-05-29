@@ -18,9 +18,14 @@ public class SUserStats  extends HttpServlet {
     
     //HttpSession session = req.getSession(false);
     //int user_id = ((UserRights) session.getAttribute("r")).getUserId();
-
-    RequestDispatcher dispatch = req.getRequestDispatcher("userStats.jsp");
-    dispatch.forward(req, resp);
+    try {
+      RequestDispatcher dispatch = req.getRequestDispatcher("userStats.jsp");
+      dispatch.forward(req, resp);
+    } catch (IllegalStateException ex) {
+      System.err.println(ex.getMessage());
+    } catch (ServletException ex) {
+      System.err.println(ex.getMessage());
+    }
   }
 
   protected void doPost(HttpServletRequest req, HttpServletResponse resp)

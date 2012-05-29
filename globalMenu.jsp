@@ -9,11 +9,11 @@ String isCurrentPage(String current, String page) {
 }
 %> 
 
-<nav id="user">
-  <header>Mon compte utilisateur</header>
-  <ul>
-    <li><a href="userstats.jsp" <%=isCurrentPage(c, "userStats.jsp") %>
-      title="Récapitulatif des congés pris ou à prendre">Statistiques</a></li>
+<nav>
+  <ul class="user">
+    <header>Mon compte utilisateur</header>
+    <li><a href="userstats.do" <%=isCurrentPage(c, "userStats.jsp") %>
+      title="Récapitulatif des congés pris ou à prendre">Mes statistiques</a></li>
     <li><a href="#" 
       title="Demandes de congés (calendrier ou liste)">Mes congés</a></li>
     <li><a href="#" 
@@ -21,21 +21,18 @@ String isCurrentPage(String current, String page) {
     <li><a href="#" 
       title="Nouvelle demande de congé">Poser un congé</a></li>
   </ul>
-</nav>
-
-<nav id="admin">
-  <header>Administration</header>
-  <ul>
+  <ul class="admin">
+    <header>Administration</header>
     <li><a href="#" 
       title="Récapitulatif des congés pris ou à prendre">Statistiques</a></li>
     <li><a href="#" 
-      title="Ajouter/Modifier/Supprimer un utilisateur">Gestion des utilisateurs</a></li>
+      title="Gestion des utilisateur (Ajouter/Modifier/Supprimer)">Utilisateurs</a></li>
     <li><a href="#" 
-      title="Ajouter/Modifier/Supprimer un groupe">Gestion des groupes</a></li>
+      title="Gestion des groupes (Ajouter/Modifier/Supprimer)">Groupes</a></li>
     <li><a href="#" 
-      title="Ajouter/Modifier/Supprimer une équipe">Gestion des équipes</a></li>
+      title="Gestion des équipes (Ajouter/Modifier/Supprimer)">Équipes</a></li>
     <li><a href="#" 
-      title="Ajouter/Modifier/Supprimer un type de congé">Gestion des types de congés</a></li>
+      title="Gestion des types de congés (Ajouter/Modifier/Supprimer)">Types de congés</a></li>
     <li><a href="#" 
       title="Durée standard, premier jour de la semaine, etc...">Réglages globaux</a></li>
   </ul>

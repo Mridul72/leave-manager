@@ -10,9 +10,7 @@
 </head>
 <body>
   
-  <header>
-    <H1>Récapitulatif personnel</H1>
-  </header>
+  <jsp:include page="header.jsp" />
   
   <jsp:include page="globalMenu.jsp" />
 

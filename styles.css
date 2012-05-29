@@ -1,6 +1,67 @@
 @CHARSET "UTF-8";
 
+/* GLOBAL */
+body {
+  margin: auto;
+  padding: auto;
+  width: 1024px;
+}
+
+/* HEADER */
+header.title {
+  background: url("img/leaveManagerIcon.png") center left no-repeat;
+  padding-left: 75px;
+}
+header.title H1 {
+  padding-left: 20px;
+}
+
+/* NAVIGATION MENUS */
+nav {
+  width: 1024px;
+  align: center;
+  display: table-col-group;
+  background-color: lightgrey;
+  border: 1px solid grey;
+}
+nav ul {
+  padding: 0px;
+  border-collapse: collapse;
+  display: table-cell;
+  align: center;
+}
+nav ul header {
+  display: inline-block;
+  font-variant: small-caps;
+  text-size: 0.5em;
+  color: dimgrey;
+}
+nav ul li {
+  display: table-cell;
+  border: 1px solid black;
+  padding: 5px;
+  vertical-align: middle;
+  text-align: center;
+  
+}
+nav ul li a {
+  text-decoration: none;
+  font-variant: small-caps;
+  font-weight: bold;
+  color: white;
+}
+nav ul.user li {
+  background-color: #009900;
+}
+nav ul.user li:hover {
+  background-color: #00CC00;
+}
+nav ul.admin li {
+  background-color: #990000;
+}
+nav ul.admin li:hover {
+  background-color: #FF0000;
+}
 li .selected {
-  color: #FF0000;
-  font-size:18px;
+  color: yellow;
 }

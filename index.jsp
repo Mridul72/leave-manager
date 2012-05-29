@@ -10,6 +10,8 @@
 </head>
 <body>
 
+  <jsp:include page="header.jsp" />
+
   <form name="checklogin" method="POST" action="checklogin.do" />
     <% 
       Object error = request.getAttribute("error");

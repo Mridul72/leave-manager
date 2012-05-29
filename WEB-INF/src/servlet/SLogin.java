@@ -41,7 +41,6 @@ public class SLogin extends HttpServlet {
       System.err.println(ex.getMessage());
     } catch (NullPointerException ex) {
       System.err.println(ex.getMessage());
-      resp.sendRedirect("index.jsp");
     }
   }
 

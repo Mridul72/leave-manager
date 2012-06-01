@@ -34,7 +34,7 @@ Release date : 06/2012
     </user-data-constraint>
   </security-constraint>
 
-<filter>
+  <filter>
     <filter-name>FLogin</filter-name>
     <filter-class>filter.FLogin</filter-class>
     <init-param>
@@ -60,7 +60,18 @@ Release date : 06/2012
     <servlet-class>servlet.SLogin</servlet-class>
     <servlet-name>SLogin</servlet-name>
   </servlet>
-
+  
+  <servlet>
+    <servlet-class>servlet.SUsersAdmin</servlet-class>
+    <servlet-name>SUsersAdmin</servlet-name>
+  </servlet>
+  
+    <servlet>
+    <servlet-class>servlet.SUserDelete</servlet-class>
+    <servlet-name>SUserDelete</servlet-name>
+  </servlet>
+  
+  
   <servlet-mapping>
     <servlet-name>SUserStats</servlet-name>
     <url-pattern>/userstats.do</url-pattern>
@@ -70,5 +81,15 @@ Release date : 06/2012
   <servlet-mapping>
     <servlet-name>SLogin</servlet-name>
     <url-pattern>/checklogin.do</url-pattern>
+  </servlet-mapping>
+  
+  <servlet-mapping>
+    <servlet-name>SUsersAdmin</servlet-name>
+    <url-pattern>/usersadmin.do</url-pattern>
+  </servlet-mapping>
+  
+  <servlet-mapping>
+    <servlet-name>SUserDelete</servlet-name>
+    <url-pattern>/deleteuser.do</url-pattern>
   </servlet-mapping>
 </web-app>

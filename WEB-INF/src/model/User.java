@@ -7,25 +7,30 @@ import java.sql.SQLException;
 import dao.DbAccessWithPooling;
 
 public class User {
-  String user_id;
-  String user_name;
-  String user_surname;
-  String gender;
-  String email;
-  Date taking_office;
-  Date termination;
-  int replacement;
-  int group;
-  int team;
+  int user_id = -1;
+  String user_name = null;
+  String surname = null;
+  String gender = null;
+  String email = null;
+  Date taking_office = null;
+  Date termination = null;
+  int replacement = -1;
+  int group = -1;
+  int team = -1;
   
-  public User(String login) throws SQLException {
-    DbAccessWithPooling dbaccess = new DbAccessWithPooling();
-    String query = "SELECT * FROM users WHERE login='"+ login + "'";
-    ResultSet rset = dbaccess.askResultSet(query);
+  public User() {}
+  
+  public User(String login) {
+    DbAccessWithPooling dbaccess = null;
+    
     try {
-      user_id = rset.getString("user_id");
+      dbaccess = new DbAccessWithPooling();
+      String query = "SELECT * FROM users WHERE login='"+ login + "'";
+      ResultSet rset = dbaccess.askResultSet(query);
+      
+      user_id = rset.getInt("user_id");
       user_name = rset.getString("user_name");
-      user_surname = rset.getString("surname");
+      surname = rset.getString("surname");
       gender = rset.getString("gender");
       email = rset.getString("email");
       taking_office = rset.getDate("taking_office");
@@ -40,28 +45,35 @@ public class User {
     }
   }
   
-  public String getUser_id() {
+//  public User(String id, String name, String surname, String gender,
+//              String email, Date taking_office, Date termination, 
+//              int replacement, int group, int team) {
+//    
+//  }
+  
+
+  public int getId() {
     return user_id;
   }
 
-  public void setUser_id(String user_id) {
+  public void setId(int user_id) {
     this.user_id = user_id;
   }
 
-  public String getUser_name() {
+  public String getName() {
     return user_name;
   }
 
-  public void setUser_name(String user_name) {
+  public void setName(String user_name) {
     this.user_name = user_name;
   }
 
-  public String getUser_surname() {
-    return user_surname;
+  public String getSurname() {
+    return surname;
   }
 
-  public void setUser_surname(String user_surname) {
-    this.user_surname = user_surname;
+  public void setSurname(String surname) {
+    this.surname = surname;
   }
 
   public String getGender() {

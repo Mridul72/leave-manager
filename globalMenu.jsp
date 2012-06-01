@@ -23,9 +23,9 @@ String isCurrentPage(String current, String page) {
   </ul>
   <ul class="admin">
     <header>Administration</header>
-    <li><a href="#" 
+    <li><a href="#"
       title="Récapitulatif des congés pris ou à prendre">Statistiques</a></li>
-    <li><a href="#" 
+    <li><a href="usersadmin.do" <%=isCurrentPage(c, "usersAdmin.jsp") %>
       title="Gestion des utilisateur (Ajouter/Modifier/Supprimer)">Utilisateurs</a></li>
     <li><a href="#" 
       title="Gestion des groupes (Ajouter/Modifier/Supprimer)">Groupes</a></li>

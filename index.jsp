@@ -26,7 +26,7 @@
           out.println("value='" + login.toString() + "'");
       %> 
     />
-    <label>Password : </</label>
+    <label>Password : </label>
     <input type="password" name="password" />
      
     <input type="submit" name="valider" />

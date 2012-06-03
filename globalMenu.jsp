@@ -27,9 +27,9 @@ String isCurrentPage(String current, String page) {
       title="Récapitulatif des congés pris ou à prendre">Statistiques</a></li>
     <li><a href="usersadmin.do" <%=isCurrentPage(c, "usersAdmin.jsp") %>
       title="Gestion des utilisateur (Ajouter/Modifier/Supprimer)">Utilisateurs</a></li>
-    <li><a href="#" 
+    <li><a href="groupsadmin.do" <%=isCurrentPage(c, "groupsAdmin.jsp") %>
       title="Gestion des groupes (Ajouter/Modifier/Supprimer)">Groupes</a></li>
-    <li><a href="#" 
+    <li><a href="teamsadmin.do" <%=isCurrentPage(c, "teamsAdmin.jsp") %>
       title="Gestion des équipes (Ajouter/Modifier/Supprimer)">Équipes</a></li>
     <li><a href="#" 
       title="Gestion des types de congés (Ajouter/Modifier/Supprimer)">Types de congés</a></li>

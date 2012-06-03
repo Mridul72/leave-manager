@@ -1,5 +1,6 @@
 package model;
 
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -7,13 +8,50 @@ import java.util.ArrayList;
 import dao.DbAccessWithPooling;
 
 public class UsersList {
+  
   private ArrayList<User> userslist = new ArrayList<User>();
   
-  public UsersList() {
+  public UsersList() {}
+  
+  public void addAll() {
+    Date now = new Date(System.currentTimeMillis());
+    String q = "SELECT U.*, T.team_name, G.group_name, R.user_sid_replace " +
+                 "FROM users U " +
+                   "LEFT OUTER JOIN teams T " +
+                     "ON U.team_sid = T.team_id " +
+                   "LEFT OUTER JOIN groups G " +
+                     "ON U.group_sid = G.group_id " +
+                   "LEFT OUTER JOIN replacements R " +
+                     "ON R.user_sid_leave = U.user_id " +
+                     "AND R.date_from < '" + now + "' " +
+                     "AND date_to > '" + now + "' " +
+                "ORDER BY U.user_name, U.surname;";
+    addUsers(q);
+  }
+  
+  public void addManagers(int team_id) {
+    Date now = new Date(System.currentTimeMillis());
+    String q = "SELECT U.*, T.team_name, G.group_name, R.user_sid_replace " +
+                 "FROM users U " +
+                   "LEFT OUTER JOIN teams T " +
+                     "ON U.team_sid = T.team_id " +
+                   "LEFT OUTER JOIN groups G " +
+                     "ON U.group_sid = G.group_id " +
+                   "LEFT OUTER JOIN replacements R " +
+                     "ON R.user_sid_leave = U.user_id " +
+                     "AND R.date_from < '" + now + "' " +
+                     "AND date_to > '" + now + "' " +
+                 "WHERE U.user_id IN " +
+                   "(SELECT user_sid FROM manage " +
+                     "WHERE team_sid = " + team_id + ") " +
+                "ORDER BY U.user_name, U.surname;";
+    addUsers(q);
+  }
+  
+  private void addUsers(String query) {
     DbAccessWithPooling dbaccess = null;
     try {
       dbaccess = new DbAccessWithPooling();
-      String query = "SELECT * FROM users;";
       ResultSet rset = dbaccess.askResultSet(query);
       while (rset.next()) {
         User u = new User();
@@ -22,11 +60,13 @@ public class UsersList {
         u.setSurname(rset.getString("surname"));
         u.setGender(rset.getString("gender"));
         u.setEmail(rset.getString("email"));
-        u.setTaking_office(rset.getDate("taking_office"));
+        u.setTakingOffice(rset.getDate("taking_office"));
         u.setTermination(rset.getDate("termination"));
-        u.setReplacement(rset.getInt("replacement_sid"));
-        u.setGroup(rset.getInt("group_sid"));
-        u.setTeam(rset.getInt("team_sid"));
+        u.setReplacement(rset.getInt("user_sid_replace"));
+        u.setGroupId(rset.getInt("group_sid"));
+        u.setGroupName(rset.getString("group_name"));
+        u.setTeamId(rset.getInt("team_sid"));
+        u.setTeamName(rset.getString("team_name"));
         userslist.add(u);
       }
     } catch (SQLException ex) {
@@ -39,7 +79,15 @@ public class UsersList {
   public ArrayList<User> getList() {
     return userslist;
   }
-
+  
+  public int getSize() {
+    return userslist.size();
+  }
+  
+  public User getItem(int i) {
+    return userslist.get(i);
+  }
+  
   public User getUser(int id) {
     for (int i = 0 ; i < userslist.size() ; i++) {
       if (userslist.get(i).getId() == id) return userslist.get(i);

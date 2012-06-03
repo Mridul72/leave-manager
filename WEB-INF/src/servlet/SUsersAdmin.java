@@ -27,6 +27,7 @@ public class SUsersAdmin extends HttpServlet {
     
     try {
       UsersList list = new UsersList();
+      list.addAll();
       req.setAttribute("users", list.getList());
       if (action != null && action.toString().equals("update")) {
         int id = Integer.parseInt(req.getParameter("id").toString());
@@ -35,6 +36,9 @@ public class SUsersAdmin extends HttpServlet {
         req.setAttribute("user_name", u.getName());
         req.setAttribute("surname", u.getName());
         req.setAttribute("gender", u.getGender());
+        req.setAttribute("email", u.getEmail());
+        req.setAttribute("taking_office", u.getTakingOffice());
+        req.setAttribute("termination", u.getTermination());
       }
       RequestDispatcher dispatch = req.getRequestDispatcher("usersAdmin.jsp");
       dispatch.forward(req, resp);

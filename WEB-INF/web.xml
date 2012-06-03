@@ -39,7 +39,7 @@ Release date : 06/2012
     <filter-class>filter.FLogin</filter-class>
     <init-param>
       <param-name>avoid-urls</param-name>
-      <param-value>/index.jsp,/checklogin.do</param-value>
+      <param-value>/index.jsp,/checklogin.do,/styles.css</param-value>
     </init-param>
   </filter>
 
@@ -67,8 +67,13 @@ Release date : 06/2012
   </servlet>
   
     <servlet>
-    <servlet-class>servlet.SUserDelete</servlet-class>
-    <servlet-name>SUserDelete</servlet-name>
+    <servlet-class>servlet.SGroupsAdmin</servlet-class>
+    <servlet-name>SGroupsAdmin</servlet-name>
+  </servlet>
+  
+    <servlet>
+    <servlet-class>servlet.STeamsAdmin</servlet-class>
+    <servlet-name>STeamsAdmin</servlet-name>
   </servlet>
   
   
@@ -89,7 +94,12 @@ Release date : 06/2012
   </servlet-mapping>
   
   <servlet-mapping>
-    <servlet-name>SUserDelete</servlet-name>
-    <url-pattern>/deleteuser.do</url-pattern>
+    <servlet-name>SGroupsAdmin</servlet-name>
+    <url-pattern>/groupsadmin.do</url-pattern>
+  </servlet-mapping>
+  
+  <servlet-mapping>
+    <servlet-name>STeamsAdmin</servlet-name>
+    <url-pattern>/teamsadmin.do</url-pattern>
   </servlet-mapping>
 </web-app>

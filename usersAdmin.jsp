@@ -5,9 +5,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <meta http-equiv="pragma" content="no-cache" />
-  <title>Récapitulatif personnel</title>
+  <title>Gestion des utilisateurs</title>
   <link rel="stylesheet" href="styles.css" type="text/css">
 </head>
 <body>
@@ -23,7 +23,7 @@
       if (o != null) s = "value='" + o.toString() + "'";
       return s;
     }
-    String isValue(String value, String input, HttpServletRequest request) {
+    String isValue(String input, String value, HttpServletRequest request) {
       Object o = request.getAttribute(input);
       String s = "";
       if (o != null && o.toString().equals(value)) s = "selected";
@@ -32,7 +32,13 @@
   %>
   
   <section>
-    <header onclick="">Ajouter/modifier un Utilisateur</header>
+    <header>
+      <%
+        if (!lastValue("user_name", request).equals(""))
+          out.println("Modifier un Utilisateur");
+        else out.println("Ajouter un Utilisateur");
+      %>
+    </header>
     <form name="newuser" method="POST" action="usersadmin.do?action=add" >
       <% 
         Object error = request.getAttribute("error");
@@ -50,7 +56,16 @@
         <option value="f" <%=isValue("gender", "f", request) %>>femme</option>
         <option value="m" <%=isValue("gender", "m", request) %>>homme</option>
       </select>
-
+      <label>Email : </label>
+      <input type="text" name="email"
+             <%=lastValue("email", request) %> />
+      <label>Date de prise de fonctions : </label>
+      <input type="text" name="taking_office"
+             <%=lastValue("taking_office", request) %> />
+      <label>Date de cessation de service : </label>
+      <input type="text" name="termination"
+             <%=lastValue("termination", request) %> />
+             
       <input type="submit" name="valider" />
     </form>
   </section>
@@ -88,11 +103,13 @@
         <td><%=userslist.get(i).getSurname() %></td>
         <td><%=userslist.get(i).getGender() %></td>
         <td><%=userslist.get(i).getEmail() %></td>
-        <td><%=userslist.get(i).getTaking_office() %></td>
-        <td><%=userslist.get(i).getTermination() %></td>
-        <td><%=userslist.get(i).getReplacement() %></td>
-        <td><%=userslist.get(i).getGroup() %></td>
-        <td><%=userslist.get(i).getTeam() %></td>
+        <td><%=userslist.get(i).getTakingOffice() %></td>
+        <td><% Object t = userslist.get(i).getTermination();
+               if (t != null) out.print(t); %></td>
+        <td><% int r = (int) userslist.get(i).getReplacement();
+               if (r != 0) out.print(r); %></td>
+        <td><%=userslist.get(i).getGroupName() %></td>
+        <td><%=userslist.get(i).getTeamName() %></td>
         <td class="button"><input type="button" value="modifier" 
           onclick="Javascript:update(<%=userslist.get(i).getId() %>);"></td>
         <td class="button"><input type="button" value="supprimer"

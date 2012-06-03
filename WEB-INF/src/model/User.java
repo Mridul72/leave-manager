@@ -7,27 +7,39 @@ import java.sql.SQLException;
 import dao.DbAccessWithPooling;
 
 public class User {
-  int user_id = -1;
+  int user_id = 0;
   String user_name = null;
   String surname = null;
   String gender = null;
   String email = null;
   Date taking_office = null;
   Date termination = null;
-  int replacement = -1;
-  int group = -1;
-  int team = -1;
+  int replacement = 0;
+  int group_id = 0;
+  String group_name = null;
+  int team_id = 0;
+  String team_name = null;
   
   public User() {}
   
   public User(String login) {
     DbAccessWithPooling dbaccess = null;
-    
+    Date now = new Date(System.currentTimeMillis());
     try {
       dbaccess = new DbAccessWithPooling();
-      String query = "SELECT * FROM users WHERE login='"+ login + "'";
-      ResultSet rset = dbaccess.askResultSet(query);
-      
+      String q = "SELECT U.*, T.team_name, G.group_name, R.user_sid_replace " +
+                   "FROM users U " +
+                     "LEFT OUTER JOIN teams T " +
+                       "ON U.team_sid = T.team_id " +
+                     "LEFT OUTER JOIN groups G " +
+                       "ON U.group_sid = G.group_id " +
+                     "LEFT OUTER JOIN replacements R " +
+                       "ON R.user_sid_leave = U.user_id " +
+                       "AND R.date_from < '" + now + "' " +
+                       "AND date_to > '" + now + "' " +
+                     " WHERE U.login='"+ login + "'";
+      ResultSet rset = dbaccess.askResultSet(q);
+      rset.next();
       user_id = rset.getInt("user_id");
       user_name = rset.getString("user_name");
       surname = rset.getString("surname");
@@ -35,9 +47,11 @@ public class User {
       email = rset.getString("email");
       taking_office = rset.getDate("taking_office");
       termination = rset.getDate("termination");
-      replacement = rset.getInt("replacement_sid");
-      group = rset.getInt("group_sid");
-      team = rset.getInt("team_sid");
+      replacement = rset.getInt("user_sid_replace");
+      group_id = rset.getInt("group_sid");
+      group_name = rset.getString("group_name");
+      team_id = rset.getInt("team_sid");
+      team_name = rset.getString("team_name");
     } catch (SQLException ex) {
       System.err.println(ex.getMessage());
     } finally {
@@ -92,11 +106,11 @@ public class User {
     this.email = email;
   }
 
-  public Date getTaking_office() {
+  public Date getTakingOffice() {
     return taking_office;
   }
 
-  public void setTaking_office(Date taking_office) {
+  public void setTakingOffice(Date taking_office) {
     this.taking_office = taking_office;
   }
 
@@ -116,20 +130,36 @@ public class User {
     this.replacement = replacement;
   }
 
-  public int getGroup() {
-    return group;
+  public int getGroupId() {
+    return group_id;
   }
 
-  public void setGroup(int group) {
-    this.group = group;
+  public void setGroupId(int group_id) {
+    this.group_id = group_id;
   }
 
-  public int getTeam() {
-    return team;
+  public String getGroupName() {
+    return group_name;
   }
 
-  public void setTeam(int team) {
-    this.team = team;
+  public void setGroupName(String group_name) {
+    this.group_name = group_name;
+  }
+
+  public int getTeamId() {
+    return team_id;
+  }
+
+  public void setTeamId(int team_id) {
+    this.team_id = team_id;
+  }
+
+  public String getTeamName() {
+    return team_name;
+  }
+
+  public void setTeamName(String team_name) {
+    this.team_name = team_name;
   }
 
 }

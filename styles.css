@@ -1,15 +1,24 @@
 @CHARSET "UTF-8";
 
 /* GLOBAL */
+* { font-size: 18px;}
 body {
   margin: auto;
   width: 1024px;
+}
+h1 {
+  font-size: 2em;
+}
+input, ul.checkedList, td, label, del {
+  font-size: 0.8em;
+  font-family: Verdana,Geneva,Kalimati,sans-serif;
 }
 
 /* HEADER */
 header.title {
   background: url("img/leaveManagerIcon.png") center left no-repeat;
   padding-left: 75px;
+  height: 60px;
 }
 header.title H1 {
   padding-left: 20px;
@@ -79,10 +88,66 @@ section .dataTable {
   border-collapse: collapse;
   margin: 10px;
   width: 100%;
+  font-size: 0.8em;
 }
 section .dataTable th {
   background-color: lightgrey;
 }
 section .dataTable td:not(.button), section .dataTable th {
   border: 1px solid dimgrey;
+  text-align: center;
+}
+
+/* FORMS */
+label {
+  display : block;
+  float: left;
+  width: 350px;
+  height: 20px;
+  text-align: right;
+  margin-right: 10px;
+  margin-bottom: 5px;
+}
+input[type="text"], input[type="password"] {
+  display: block;
+  width: 300px;
+  height: 18px;
+  border: 1px solid grey;
+  background-color: white;
+  margin-bottom: 5px;
+}
+select {
+  display: block;
+  width: 300px;
+}
+input[type="submit"] {
+  display: block;
+  width: 300px;
+  margin: auto;
+  margin-bottom: 10px;
+}
+ul.checkedList {
+  display: block;
+  height: 100px;
+  width: 300px;
+  border: 1px solid grey;
+  background-color: white;
+  list-style: none;
+  overflow: auto;
+  padding: 0px;
+  margin: 0 0 5px 0;
+}
+ul.checkedList label {
+  display : block;
+  float: none;
+  width: auto;
+  text-align: left;
+  padding: 0px;
+  margin: 0px;
+}
+ul.checkedList label.odd {
+  background-color: lightgrey;
+}
+ul.checkedList label:hover {
+  background-color: grey;
 }

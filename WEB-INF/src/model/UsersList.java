@@ -13,6 +13,10 @@ public class UsersList {
   
   public UsersList() {}
   
+  public void addUser(User u) {
+    userslist.add(u);
+  }
+  
   public void addAll() {
     Date now = new Date(System.currentTimeMillis());
     String q = "SELECT U.*, T.team_name, G.group_name, R.user_sid_replace " +
@@ -26,7 +30,9 @@ public class UsersList {
                      "AND R.date_from < '" + now + "' " +
                      "AND date_to > '" + now + "' " +
                 "ORDER BY U.user_name, U.surname;";
-    addUsers(q);
+    SafeQuery query = new SafeQuery();
+    query.setPreparedquery(q);
+    add(query);
   }
   
   public void addManagers(int team_id) {
@@ -43,12 +49,15 @@ public class UsersList {
                      "AND date_to > '" + now + "' " +
                  "WHERE U.user_id IN " +
                    "(SELECT user_sid FROM manage " +
-                     "WHERE team_sid = " + team_id + ") " +
+                     "WHERE team_sid = ? ) " +
                 "ORDER BY U.user_name, U.surname;";
-    addUsers(q);
+    SafeQuery query = new SafeQuery();
+    query.setPreparedquery(q);
+    query.addArgument(team_id);
+    add(query);
   }
   
-  private void addUsers(String query) {
+  private void add(SafeQuery query) {
     DbAccessWithPooling dbaccess = null;
     try {
       dbaccess = new DbAccessWithPooling();

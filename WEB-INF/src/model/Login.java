@@ -19,17 +19,20 @@ public class Login {
   public static int checkPassword(String login, String password) {
     // acces database to check identifiers
     DbAccessWithPooling dbaccess = new DbAccessWithPooling();
-    String query = "SELECT * FROM users WHERE login='" + login + "';";
+    SafeQuery query = new SafeQuery();
+    query.setPreparedquery("SELECT * FROM users WHERE login = ? ;");
+    query.addArgument(login);
     ResultSet rset = dbaccess.askResultSet(query);
-    try  {
-      rset.next();
+    try {
+      if (rset.isBeforeFirst()) rset.next();
+      else return -1;
       String pass = rset.getString("password");
       // is password ok ? 
       if (getMD5(password).equals(pass)) {
         return rset.getInt("user_id");
       }
     } catch (SQLException ex) {
-      ex.printStackTrace();
+      System.err.println(ex.getMessage());
     } finally {
       dbaccess.freeResultSet();
     }

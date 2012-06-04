@@ -4,16 +4,19 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
+import model.SafeQuery;
+
 import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 public class DbAccessWithPooling {
 
   private DataSource pool;  // Database connection pool
   private Connection conn = null;
-  private Statement stmt = null;
+  private PreparedStatement stmt = null;
   private ResultSet rset = null; 
   /**
    * Place into the pool attribute a new DataSource from the pool
@@ -30,39 +33,37 @@ public class DbAccessWithPooling {
   }
   /**
    * Get a String from the database with a query of type: 
-   * SELECT cible FROM table WHERE source=valeur
+   * SELECT target FROM table WHERE source=value
    * @param table  the table in which to search information
-   * @param cible  the name of the column where is the data to obtain
+   * @param target  the name of the column where is the data to obtain
    * @param source the name of the column containing the value to search
-   * @param valeur the searched value in the source column
+   * @param value the searched value in the source column
    * @return the data to obtain
    */
-  public String askString(String table, String cible, String source, int valeur) {
-    String query = "SELECT " + cible + " FROM " + table + " WHERE " + source + "='" + valeur + "'";
-    return stringFromDb(query, cible);
+  public String askString(String table, String target, String source, int val) {
+    return askString(table, target, source, String.valueOf(val));
   }
   /**
    * Get a String from the database with a query of type: 
-   * SELECT cible FROM table WHERE source=valeur
+   * SELECT target FROM table WHERE source=value
    * @param table  the table in which to search information
-   * @param cible  the name of the column where is the data to obtain
+   * @param target  the name of the column where is the data to obtain
    * @param source the name of the column containing the value to search
-   * @param valeur the searched value in the source column
+   * @param value the searched value in the source column
    * @return the data to obtain
    */
-  public String askString(String table, String cible, String source, String valeur) {
-    String query = "SELECT " + cible + " FROM " + table + " WHERE " + source + "='" + valeur + "'";
-    return stringFromDb(query, cible);
-  }
-
-  private String stringFromDb(String query, String cible) {
+  public String askString(String tab, String target, String source, String val){
     if (pool == null) getDataSource();
     String result = null;
     try {
       conn = pool.getConnection();
-      stmt = conn.createStatement();
-      rset = stmt.executeQuery(query);
-      if (rset.next()) result = rset.getString(cible);
+      stmt = conn.prepareStatement("SELECT ? FROM ? WHERE ? = ?");
+      stmt.setString(1, target); 
+      stmt.setString(2, tab);
+      stmt.setString(3, source);
+      stmt.setString(4, val);
+      rset = stmt.executeQuery();
+      if (rset.next()) result = rset.getString(target);
     } catch (SQLException ex) {
       System.err.println(ex.getMessage());
     } catch (NullPointerException ex) {
@@ -79,39 +80,37 @@ public class DbAccessWithPooling {
   }
   /**
    * Get an int from the database with a query of type: 
-   * SELECT cible FROM table WHERE source=valeur
+   * SELECT target FROM table WHERE source=value
    * @param table  the table in which to search information
-   * @param cible  the name of the column where is the data to obtain
+   * @param target  the name of the column where is the data to obtain
    * @param source the name of the column containing the value to search
-   * @param valeur the searched value in the source column
+   * @param value the searched value in the source column
    * @return the data to obtain
    */
-  public int askInt(String table, String cible, String source, int valeur) {
-    String query = "SELECT " + cible + " FROM " + table + " WHERE " + source + "='" + valeur + "'";
-    return intFromDb(query, cible);
+  public int askInt(String table, String target, String source, int value) {
+    return askInt(table, target, source, String.valueOf(value));
   }
   /**
    * Get an int from the database with a query of type: 
-   * SELECT cible FROM table WHERE source=valeur
+   * SELECT target FROM table WHERE source=value
    * @param table  the table in which to search information
-   * @param cible  the name of the column where is the data to obtain
+   * @param target  the name of the column where is the data to obtain
    * @param source the name of the column containing the value to search
-   * @param valeur the searched value in the source column
+   * @param value the searched value in the source column
    * @return the data to obtain
    */
-  public int askInt(String table, String cible, String source, String valeur) {
-    String query = "SELECT " + cible + " FROM " + table + " WHERE " + source + "='" + valeur + "'";
-    return intFromDb(query, cible);
-  }
-
-  public int intFromDb(String query, String cible) {
+  public int askInt(String table, String target, String source, String value) {
     if (pool == null) getDataSource();
-    int result = -1;
+    int result = 0;
     try {
       conn = pool.getConnection();
-      stmt = conn.createStatement();
-      rset = stmt.executeQuery(query);
-      if (rset.next()) result = rset.getInt(cible);
+      stmt = conn.prepareStatement("SELECT ? FROM ? WHERE ? = ?");
+      stmt.setString(1, target);
+      stmt.setString(2, table);
+      stmt.setString(3, source);
+      stmt.setString(4, value);
+      rset = stmt.executeQuery();
+      if (rset.next()) result = rset.getInt(target);
     } catch (SQLException ex) {
       System.err.println(ex.getMessage());
     } catch (NullPointerException ex) {
@@ -134,12 +133,20 @@ public class DbAccessWithPooling {
    * @return a ResultSet (never null). Use askResultSet(query).isBeforeFirst()
    * to know if the returned ResultSet is empty
    */
-  public ResultSet askResultSet(String query) {
+  public ResultSet askResultSet(SafeQuery query) {
     if (pool == null) getDataSource();
     try {
       conn = pool.getConnection();
-      stmt = conn.createStatement();
-      rset = stmt.executeQuery(query);
+      stmt = conn.prepareStatement(query.getPreparedquery());
+      for(int i = 0 ; i < query.getSize() ; i++) {
+        if (query.getDataType(i).equals("String"))
+          stmt.setString(i+1, (String) query.getData(i));
+        else if (query.getDataType(i).equals("int"))
+          stmt.setInt(i+1, (Integer) query.getData(i));
+        else if (query.getDataType(i).equals("Date"))
+          stmt.setDate(i+1, (Date) query.getData(i));
+      }
+      rset = stmt.executeQuery();
     } catch (SQLException ex) {
       System.err.println(ex.getMessage());
     } catch (NullPointerException ex) {
@@ -165,13 +172,27 @@ public class DbAccessWithPooling {
    * @return either (1) the row count for SQL Data Manipulation Language (DML) 
    *         statements or (2) 0 for SQL statements that return nothing
    */
-  public int executeQuery(String query) {
+  public int executeQuery(SafeQuery query, Boolean withkey) {
     if (pool == null) getDataSource();
+    int key = 0;
     int nMaj = 0;
     try {
       conn = pool.getConnection();
-      stmt = conn.createStatement();
-      nMaj = stmt.executeUpdate(query);
+      stmt = conn.prepareStatement(query.getPreparedquery());
+      for(int i = 0 ; i < query.getSize() ; i++) {
+        if (query.getDataType(i).equals("String"))
+          stmt.setString(i+1, (String) query.getData(i));
+        else if (query.getDataType(i).equals("int"))
+          stmt.setInt(i+1, (Integer) query.getData(i));
+        else if (query.getDataType(i).equals("Date"))
+          stmt.setDate(i+1, (Date) query.getData(i));
+      }
+      nMaj = stmt.executeUpdate();
+      rset = stmt.getGeneratedKeys();
+      if (withkey && rset != null) {
+        rset.next();
+        key = rset.getInt(1);
+      }
     } catch (SQLException ex) {
       System.err.println(ex.getMessage());
     } catch (NullPointerException ex) {
@@ -184,6 +205,12 @@ public class DbAccessWithPooling {
         System.err.println(ex.getMessage());
       }
     }
-    return nMaj;
+    if (withkey) return key;
+    else return nMaj;
   }
+  
+  public int executeQuery(SafeQuery query) {
+    return executeQuery(query, false);
+  }
+  
 }

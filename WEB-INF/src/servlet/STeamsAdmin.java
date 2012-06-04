@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import model.Team;
 import model.TeamsList;
+import model.User;
 import model.UsersList;
 
 public class STeamsAdmin extends HttpServlet {
@@ -17,38 +18,56 @@ public class STeamsAdmin extends HttpServlet {
   protected void doGet(HttpServletRequest req, HttpServletResponse resp)
       throws ServletException, IOException {
     
+    Object action = req.getParameter("action");
+    UsersList users = new UsersList();
+    users.addAll();
+    req.setAttribute("users", users);
+    if (action != null && action.toString().equals("delete")) {
+      
+    }
+    if (action != null && action.toString().equals("add")) {
+      Team team = new Team();
+      String team_name = req.getParameter("team_name");
+      if (!verif(team_name, req, resp)) return;
+      team.setName(team_name);
+      String[] m = req.getParameterValues("managers");
+      UsersList managers = new UsersList();
+      for (int i = 0; i < m.length; i++){
+        int user_id = Integer.valueOf(m[i]);
+        User u = users.getUser(user_id);
+        managers.addUser(u);
+      }
+      team.setManagers(managers);
+      team.putTeamIntoDB();
+    }
+    else if (action != null && action.toString().equals("update")) {
+
+    }
+    redirect(req, resp);
+  }
+
+  private boolean verif(String team_name, HttpServletRequest req, 
+                                       HttpServletResponse resp) {
+    String expreg = "[\\p{Alnum}-']{3,}";
+    if (!team_name.matches(expreg)) {
+      req.setAttribute("error", "le nom de votre équipe ne doit contenir" +
+                       " que des caractères alphanumériques ou ' et -");
+      req.setAttribute("action", req.getParameter("action"));
+      req.setAttribute("team_id", req.getParameter("team_id"));
+      req.setAttribute("team_name", req.getParameter("team_name"));
+      String[] managers = req.getParameterValues("managers");
+      req.setAttribute("managers", managers);
+      
+      redirect(req, resp);
+      return false;
+    }
+    return true;
+  }
+  
+  private void redirect(HttpServletRequest req, HttpServletResponse resp) {
     try {
-      Object action = req.getParameter("action");
-      if (req.getAttribute("teams") == null) {
-        System.err.println("re");
-        TeamsList teams = new TeamsList();
-        req.setAttribute("teams", teams);
-      }
-      if (req.getAttribute("users") == null) {
-        UsersList users = new UsersList();
-        users.addAll();
-        req.setAttribute("users", users);
-      }
-
-//    if (action != null && action.toString().equals("add")) {
-//      String[] res = request.getParameterValues("members" );
-//      for (int i = 0; i < res.length; ++i){
-//        System.out.println(res[i]);
-//      } 
-//    } else if (action != null && action.toString().equals("delete")) {
-//      
-//    }
-    
-
-
-      if (action != null && action.toString().equals("update")) {
-        int id = Integer.parseInt(req.getParameter("team_id").toString());
-        Team t = ((TeamsList) req.getAttribute("teams")).getTeam(id);
-        req.setAttribute("action", "update");
-        req.setAttribute("team_id", t.getId());
-        req.setAttribute("team_name", t.getName());
-      }
-
+      TeamsList teams = new TeamsList();
+      req.setAttribute("teams", teams);
       RequestDispatcher dispatch = req.getRequestDispatcher("teamsAdmin.jsp");
       dispatch.forward(req, resp);
     } catch (IOException ex) {
@@ -57,7 +76,7 @@ public class STeamsAdmin extends HttpServlet {
       System.err.println(ex.getMessage());
     }
   }
-
+  
   protected void doPost(HttpServletRequest req, HttpServletResponse resp)
       throws ServletException, IOException {
   

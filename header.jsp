@@ -1,3 +1,3 @@
 <header class="title">
-  <H1>Leave Manager</H1>
+  <a href="index.jsp"><h1>Leave Manager</h1></a>
 </header>

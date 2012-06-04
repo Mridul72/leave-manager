@@ -16,7 +16,7 @@
     <% 
       Object error = request.getAttribute("error");
       if (error != null) 
-        out.println("<p class='error'>" + error.toString() + "</p>");
+        out.println("<p id='error'>" + error.toString() + "</p>");
     %>
     <label>Login :</label>
     <input type="text" name="login" 

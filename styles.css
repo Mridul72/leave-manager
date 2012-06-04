@@ -13,12 +13,25 @@ input, ul.checkedList, td, label, del {
   font-size: 0.8em;
   font-family: Verdana,Geneva,Kalimati,sans-serif;
 }
+#error {
+  width: 100%;
+  color : red;
+  font-style: italic;
+  text-align: center;
+}
 
 /* HEADER */
 header.title {
   background: url("img/leaveManagerIcon.png") center left no-repeat;
   padding-left: 75px;
   height: 60px;
+}
+header.title a {
+  color: black;
+  text-decoration: none;
+}
+header.title a:hover {
+  color: #660000;
 }
 header.title H1 {
   padding-left: 20px;
@@ -102,7 +115,7 @@ section .dataTable td:not(.button), section .dataTable th {
 label {
   display : block;
   float: left;
-  width: 350px;
+  width: 450px;
   height: 20px;
   text-align: right;
   margin-right: 10px;
@@ -110,7 +123,7 @@ label {
 }
 input[type="text"], input[type="password"] {
   display: block;
-  width: 300px;
+  width: 350px;
   height: 18px;
   border: 1px solid grey;
   background-color: white;
@@ -118,18 +131,18 @@ input[type="text"], input[type="password"] {
 }
 select {
   display: block;
-  width: 300px;
+  width: 350px;
 }
 input[type="submit"] {
   display: block;
-  width: 300px;
-  margin: auto;
+  width: 350px;
+  margin-left: 460px;
   margin-bottom: 10px;
 }
 ul.checkedList {
   display: block;
   height: 100px;
-  width: 300px;
+  width: 350px;
   border: 1px solid grey;
   background-color: white;
   list-style: none;

@@ -16,6 +16,23 @@ public class Team {
     managerslist.addManagers(team_id);
   }
   
+  public void putTeamIntoDB() {
+    DbAccessWithPooling dbaccess = new DbAccessWithPooling();
+    SafeQuery query = new SafeQuery();
+    query.setPreparedquery("INSERT INTO teams VALUES (null, ?);");
+    query.addArgument(team_name);
+    team_id = dbaccess.executeQuery(query, true);
+    for (int i = 0 ; i < managerslist.getSize() ; i++) {
+      int user_id = managerslist.getItem(i).getId();
+      System.err.println(managerslist.getSize());
+      SafeQuery query2 = new SafeQuery();
+      query2.setPreparedquery("INSERT INTO manage VALUES ( ? , ? );");
+      query2.addArgument(user_id);
+      query2.addArgument(team_id);
+      dbaccess.executeQuery(query);
+    }
+  }
+  
   public int getId() {
     return team_id;
   }

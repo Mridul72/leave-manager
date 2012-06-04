@@ -11,10 +11,10 @@ public class TeamsList {
   private ArrayList<Team> teamslist = new ArrayList<Team>();
   
   public TeamsList() {
-    DbAccessWithPooling dbaccess = null;
+    DbAccessWithPooling dbaccess = new DbAccessWithPooling();
     try {
-      dbaccess = new DbAccessWithPooling();
-      String query = "SELECT * FROM teams ORDER by team_name;";
+      SafeQuery query = new SafeQuery();
+      query.setPreparedquery("SELECT * FROM teams ORDER by team_name;");
       ResultSet rset = dbaccess.askResultSet(query);
       while (rset.next()) {
         Team t = new Team();

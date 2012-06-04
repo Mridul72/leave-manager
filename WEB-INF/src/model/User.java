@@ -37,8 +37,11 @@ public class User {
                        "ON R.user_sid_leave = U.user_id " +
                        "AND R.date_from < '" + now + "' " +
                        "AND date_to > '" + now + "' " +
-                     " WHERE U.login='"+ login + "'";
-      ResultSet rset = dbaccess.askResultSet(q);
+                     " WHERE U.login = ?;";
+      SafeQuery query = new SafeQuery();
+      query.setPreparedquery(q);
+      query.addArgument(login);
+      ResultSet rset = dbaccess.askResultSet(query);
       rset.next();
       user_id = rset.getInt("user_id");
       user_name = rset.getString("user_name");

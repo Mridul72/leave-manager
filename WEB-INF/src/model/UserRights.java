@@ -19,7 +19,9 @@ public class UserRights {
   public UserRights(int id) {
     this.user_id = id;
     DbAccessWithPooling dbaccess = new DbAccessWithPooling();
-    String query = "SELECT * FROM users_rights WHERE user_sid='"+ user_id + "';";
+    SafeQuery query = new SafeQuery();
+    query.setPreparedquery("SELECT * FROM users_rights WHERE user_sid = ? ;");
+    query.addArgument(user_id);
     ResultSet rset = dbaccess.askResultSet(query);
     try {
       while(rset.next()) {
@@ -53,9 +55,12 @@ public class UserRights {
     if (dbaccess.askInt("rights", "right_id", "right_id", right_id) < 0 ||
         dbaccess.askString("users", "login", "user_id", user_id) == null) {
       return false;
-    } else if (dbaccess.askInt("users_rights", "right_sid", "user_sid", user_id) < 0) {
-      String query = "INSERT INTO users_rights " +
-                     "VALUES (" + user_id + "," + right_id + ");";
+    } 
+    else if (dbaccess.askInt("users_rights","right_sid","user_sid",user_id)<0) {
+      SafeQuery query = new SafeQuery();
+      query.setPreparedquery("INSERT INTO users_rights VALUES ( ? , ?);");
+      query.addArgument(user_id);
+      query.addArgument(right_id);
       if (dbaccess.executeQuery(query) == 0) return false;
       else rights.add(right_id);
     }
@@ -69,7 +74,11 @@ public class UserRights {
    */
   public boolean removeRight(int right_id) {
     DbAccessWithPooling dbaccess = new DbAccessWithPooling();
-    String query = "DELETE * INTO users_rights WHERE user_sid=" + user_id + "AND right_sid=" + right_id + ";";
+    SafeQuery query = new SafeQuery();
+    query.setPreparedquery("DELETE * INTO users_rights WHERE user_sid = ? " +
+                                                         "AND right_sid = ? ;");
+    query.addArgument(user_id);
+    query.addArgument(right_id);
     if (dbaccess.executeQuery(query) == 0) return false;
     return true;
   }

@@ -39,7 +39,7 @@ Release date : 06/2012
     <filter-class>filter.FLogin</filter-class>
     <init-param>
       <param-name>avoid-urls</param-name>
-      <param-value>/index.jsp,/checklogin.do,/styles.css</param-value>
+      <param-value>/index.jsp,/checklogin.do,/styles.css,/img/leaveManagerIcon.png</param-value>
     </init-param>
   </filter>
 

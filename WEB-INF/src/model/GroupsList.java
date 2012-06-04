@@ -14,7 +14,8 @@ public class GroupsList {
     DbAccessWithPooling dbaccess = null;
     try {
       dbaccess = new DbAccessWithPooling();
-      String query = "SELECT * FROM groups;";
+      SafeQuery query = new SafeQuery();
+      query.setPreparedquery("SELECT * FROM groups;");
       ResultSet rset = dbaccess.askResultSet(query);
       while (rset.next()) {
         Group g = new Group();

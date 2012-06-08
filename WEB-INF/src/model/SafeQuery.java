@@ -10,6 +10,12 @@ public class SafeQuery {
   
   public SafeQuery() {}
   
+  public void reset() {
+    preparedquery = "";
+    datalist.clear();
+    datatypes.clear();
+  }
+  
   public void setPreparedquery(String query) {
     preparedquery = query;
   }

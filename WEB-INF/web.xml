@@ -39,7 +39,7 @@ Release date : 06/2012
     <filter-class>filter.FLogin</filter-class>
     <init-param>
       <param-name>avoid-urls</param-name>
-      <param-value>/index.jsp,/checklogin.do,/styles.css,/img/leaveManagerIcon.png</param-value>
+      <param-value>/index.jsp,/checklogin.do,/styles.css,/img/leaveManagerIcon.png,/jquery-1.7.1.min.js</param-value>
     </init-param>
   </filter>
 
@@ -52,28 +52,28 @@ Release date : 06/2012
   </filter-mapping>
 
   <servlet>
-    <servlet-class>servlet.SUserStats</servlet-class>
     <servlet-name>SUserStats</servlet-name>
+    <servlet-class>servlet.SUserStats</servlet-class>
   </servlet>
   
   <servlet>
-    <servlet-class>servlet.SLogin</servlet-class>
     <servlet-name>SLogin</servlet-name>
+    <servlet-class>servlet.SLogin</servlet-class>
   </servlet>
   
   <servlet>
-    <servlet-class>servlet.SUsersAdmin</servlet-class>
     <servlet-name>SUsersAdmin</servlet-name>
+    <servlet-class>servlet.SUsersAdmin</servlet-class>
   </servlet>
   
-    <servlet>
-    <servlet-class>servlet.SGroupsAdmin</servlet-class>
+  <servlet>
     <servlet-name>SGroupsAdmin</servlet-name>
+    <servlet-class>servlet.SGroupsAdmin</servlet-class>
   </servlet>
   
-    <servlet>
-    <servlet-class>servlet.STeamsAdmin</servlet-class>
+  <servlet>
     <servlet-name>STeamsAdmin</servlet-name>
+    <servlet-class>servlet.STeamsAdmin</servlet-class>
   </servlet>
   
   

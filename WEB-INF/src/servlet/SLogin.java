@@ -1,6 +1,8 @@
 package servlet;
 
 import java.io.IOException;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -15,6 +17,9 @@ public class SLogin extends HttpServlet {
 
   protected void doGet(HttpServletRequest req, HttpServletResponse resp)
       throws ServletException, IOException {
+    
+    Locale locale = req.getLocale(); 
+    ResourceBundle res = ResourceBundle.getBundle("lang.LMTexts", locale);
     
     try {
       // retrieves the identifiers
@@ -32,7 +37,7 @@ public class SLogin extends HttpServlet {
         req.getRequestDispatcher("showhome.do").forward(req, resp);
       } else {
         // login fail, return to the login page
-        req.setAttribute("error", "Login failed: login or password incorrect");
+        req.setAttribute("error", res.getObject("login_error"));
         req.getRequestDispatcher("index.jsp").forward(req, resp);
       }
     } catch (IOException ex) {

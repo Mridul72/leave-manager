@@ -4,15 +4,22 @@
 <%@ page import="model.UsersList" %>
 <%@ page import="model.User" %>
 <%@ page import="java.util.Enumeration" %>
+<%@ page import="java.util.Locale" %>
+<%@ page import="java.util.ResourceBundle" %>
 <%@ page language="java" contentType="text/html; charset=utf-8"
     pageEncoding="utf-8"%>
+<% 
+  Locale locale = request.getLocale(); 
+  ResourceBundle res = ResourceBundle.getBundle("lang.LMTexts", locale);
+%>
 <!DOCTYPE html>
 <html>
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <meta http-equiv="pragma" content="no-cache" />
-  <title>Gestion des équipes</title>
+  <title><%=res.getObject("team_title") %></title>
   <link rel="stylesheet" href="styles.css" type="text/css">
+  <script type="text/javascript" src="jquery-1.7.1.min.js"></script>
 </head>
 <body>
   
@@ -23,48 +30,49 @@
   <%! // layout methods
     String stringValue(String input, HttpServletRequest request) {
       Object o = request.getAttribute(input);
-      return (o != null)? o.toString() : "";
+      return (o != null) ? o.toString() : "";
     }
     int intValue(String input, HttpServletRequest request) {
       Object o = request.getAttribute(input);
-      return (o != null)? Integer.valueOf(o.toString()) : 0;
+      return (o != null && !o.toString().equals("")) ?
+          Integer.valueOf(o.toString()) : 0;
     }
-    Boolean isManager(int user_id, HttpServletRequest request) {
-      String[] managers = (String[]) request.getAttribute("managers");
-      if (managers != null) {
-        for (int i = 0 ; i < managers.length ; i++)
-          if (Integer.valueOf(managers[i]) == user_id) return true;
+    String teamManagers(HttpServletRequest request,Team t,UsersList userslist,
+                        ResourceBundle res) {
+      String s = "";
+      String optids = "";
+      String reqids = "";
+      UsersList reqmanagers = t.getReqManagers();
+      UsersList optmanagers = t.getOptManagers();
+      int i;
+      for (i = 0 ; i < reqmanagers.getSize() ; i++) {
+        reqids += reqmanagers.getItem(i).getId() + ",";
+        s += manager(userslist, reqmanagers.getItem(i), res);
       }
-      return false;
+      for (i = 0 ; i < optmanagers.getSize() ; i++) {
+        optids += optmanagers.getItem(i).getId() + ",";
+        s += manager(userslist, optmanagers.getItem(i), res);
+      }
+      if (s != "") s = s.substring(0, s.lastIndexOf(", "));
+      if (reqids != "") reqids = reqids.substring(0, reqids.lastIndexOf(","));
+      if (optids != "") optids = optids.substring(0, optids.lastIndexOf(","));
+      s += "<input type='hidden' id='reqmanagers" + t.getId() + "' ";
+      s += "value='[" + reqids + "]'>";
+      s += "<input type='hidden' id='optmanagers" + t.getId() + "' ";
+      s += "value='[" + optids + "]'>";
+      return s;
     }
-    String teamManagers(UsersList managers, UsersList userslist, int team_id) {
-      String r = "";
-      ArrayList<Integer> ids = new ArrayList<Integer>();
-      for (int i = 0 ; i < managers.getSize() ; i++) {
-        User manager = managers.getItem(i);
-        ids.add(manager.getId());
-        // if the manager is replaced
-        if (manager.getReplacement() != 0) {
-          User replacement = userslist.getUser(manager.getReplacement());
-          r += "(<del>" + manager.getSurname() + " ";
-          r +=  manager.getName() + "</del>) ";
-          r += replacement.getSurname() + " ";
-          r += replacement.getName() + ", ";
-        }
-        else {
-          r += manager.getSurname() + " ";
-          r += manager.getName() + ", ";
-        }
+    String manager(UsersList userslist, User manager, ResourceBundle res) {
+      String s = "";
+      s += manager.getSurname() + " " + manager.getName();
+      // if the manager is replaced
+      if (manager.getReplacement() != 0) {
+        User replacement = userslist.getUser(manager.getReplacement());
+        s += " <small>(" + res.getObject("replaced_by_text") + " ";
+        s += replacement.getSurname() + " ";
+        s += replacement.getName() + ")</small>";
       }
-      if (r != "") r = r.substring(0, r.lastIndexOf(", ")); //suppress last coma
-      // ids of the managers for update
-      r += "<input type='hidden' id='managers" + team_id + "' value='[";
-      for (int i = 0 ; i < ids.size() ; i++) {
-        if (i != 0) r += ",";
-        r += ids.get(i);
-      }
-      r += "]'>";
-      return r;
+      return s + ", ";
     }
     String teamMembers(int team_id, UsersList userslist) {
       String r = "";
@@ -83,116 +91,172 @@
     UsersList userslist = (UsersList) request.getAttribute("users");
     int team_id = intValue("team_id", request);
     String team_name = stringValue("team_name", request);
-    String action = (String) request.getAttribute("action");
-    if (action == null) action = "add";
+    String action = stringValue("action", request);
+    if (action.equals("")) action = "add";
     Object error = request.getAttribute("error");
   %>
   
   <!-- FORM ADD/UPDATE TEAM -->
   <section <%= (error != null) ? "" : "style='display:none;'" %>
            id="form_section">
-    <header id="form-title">Ajouter une équipe</header>
+    <header id="form_title"><%=res.getObject("add_a_team_text") %></header>
     <%= (error != null)? "<p id='error'>" + error.toString() + "</p>" : 
                          "<p id='error'></p>" %>
     <form name="newteam" method="POST" action="teamsadmin.do" id="team_form">
-      <input type="text" name="action" value=""  id="action_field" />
-      <input type="text" name="team_id" value="" id="id_field" />
-      <label id="team_name_label">Nom :</label>
+      <input type="hidden" name="action" value=""  id="action_field" />
+      <input type="hidden" name="team_id" value="" id="id_field" />
+      <label id="team_name_label"><%=res.getObject("name_text") %></label>
       <input type="text" name="team_name" value="" id="name_field" />
-      <label>Equipe supervisée par :</label>
-      <ul class="checkedList">
-      <% 
-        for (int i = 0 ; i < userslist.getSize() ; i++) {
-          User u = userslist.getItem(i);
-          int id = u.getId();
-          out.print("<li><label");
-          if (i % 2 != 0) out.print(" class='odd'");
-          out.print("><input type='checkbox' id='user" + id + "' ");
-          out.print("name='managers' value='" + id + "'>");
-          out.println(u.getName() + " " + u.getSurname() + "</label></li>");
-        }
-      %>
-      <!-- REFILLING OF FORM IF NECESSARY   -->
-      <script type="text/javascript">
-      <% 
-        if (team_id != 0 && team_name != "") {
-          out.println("document.getElementById('action_field').value = '" +
-                      action + "'");
-          out.println("document.getElementById('id_field').value = '" +
-                      team_id + "'");
-          out.println("document.getElementById('name_field').value = '" +
-                      team_name + "'");
+      <div class="MultiSelectTransfert">
+        <select id="A" multiple>
+        <% // filling the select with the list of users
           for (int i = 0 ; i < userslist.getSize() ; i++) {
-            int id = userslist.getItem(i).getId();
-            if (isManager(id, request)) {
-              out.println("document.getElementById('user" + 
-                          id + "').checked = true");
-            }
+            User u = userslist.getItem(i);
+            int id = u.getId();
+            out.print("<option id='user" + id + "' value='" + id + "'");
+            if (i % 2 != 0) out.print(" class='odd'");
+            out.print(">" + u.getName() + " " + u.getSurname() + "</option>");
           }
+        %>
+        </select>
+        <div class="Bbuttons">
+          <input type="button" onclick="JavaScript: move('A', 'B')" value=">>">
+          <input type="button" onclick="JavaScript: move('B', 'A')" value="<<">
+        </div>
+        <div class="B">
+          <label><%=res.getObject("requested_managers_text") %></label>
+          <select name="reqmanagers" id="B" multiple>
+          </select>
+        </div>
+        <div class="Cbuttons">
+          <input type="button" onclick="JavaScript: move('A', 'C')" value=">>">
+          <input type="button" onclick="JavaScript: move('C', 'A')" value="<<">
+        </div>
+        <div class="C">
+          <label><%=res.getObject("optional_managers_text") %></label>
+          <select name="optmanagers" id="C" multiple>
+          </select>
+        </div>
+      </div>
+      <script type="text/javascript">
+        function move(from, to) { // moving an option from a select to another
+          $('#' + from + ' option:selected').each(function(i) {
+            $(this).remove().appendTo('#' + to).attr("selected",false);
+          });
+          sortSelect(to);
         }
-      %>
+        function sortSelect(id) { // sorting the options
+          var options = [];
+          $('#' + id + ' option').each(function(i) {
+            options.push({
+              val: $(this).val(),
+              text: $(this).text()
+            });
+          });
+          options.sort(function(a, b){
+            if(a.text > b.text) return 1;
+            else if (a.text == b.text) return 0;
+            else return -1;
+          });
+          $('#' + id + ' option').each(function(i) {
+            $(this).val(options[i].val).text(options[i].text);
+          });
+        }
       </script>
-      </ul>
-      <input type="submit" name="valider" />
+      <input type="button" class="submit" value="Valider" 
+             onclick="JavaScript:send()"/>
     </form>
   </section>
   
   <!-- ACTIONS IN CASE OF ADD / UPDATE / DELETE -->
   <script type="text/javascript">
+    function prepare() {
+      $('#form_section').css('display','block');
+      $('#error').css('display','none');
+      $('#B option, #C option').each(function(i) {
+        $(this).remove().appendTo('#A');
+      });
+    }
     function upd(id, name) {
-      document.getElementById("form_section").style.display = "block";
-      document.getElementById("error").style.display = "none";
-      document.getElementById("team_name_label").innerHTML = "Equipe \"" + 
-                              name + "\" - Nouveau nom :"
-      document.forms['newteam'].reset();
-      document.getElementById("action_field").value = "update";
-      document.getElementById("form-title").innerHTML = "Modifier une équipe"
-      document.getElementById("id_field").value = id;
-      document.getElementById("name_field").value = name;
-      var ids = eval(document.getElementById("managers" + id).value);
-      for(var i= 0; i < ids.length; i++) // check managers
-        document.getElementById("user" + ids[i]).checked = true
+      prepare();
+      $('#form_title').html("<%=res.getObject("upade_a_team_text") %>");
+      $('#action_field').val("update");
+      $('#id_field').val(id);
+      $('#team_name_label').html('<%=res.getObject("team_text") %> '
+                               + '&quot;' + name + '&quot; - '
+                               + '<%=res.getObject("new_name_text") %> :');
+      $('#name_field').val(name);
+      $.each(eval($('#reqmanagers' + id).val()),function(i, id) {
+        $('#user' + id).remove().appendTo('#B');
+      });
+      $.each(eval($('#optmanagers' + id).val()),function(i, id) {
+        $('#user' + id).remove().appendTo('#C');
+      });
     }
     function add() {
-      document.getElementById("form_section").style.display = "block";
-      document.getElementById("error").style.display = "none";
-      document.getElementById("team_name_label").innerHTML = "Nom :"
-      document.forms['newteam'].reset();
-      document.getElementById("action_field").value = "add";
-      document.getElementById("form-title").innerHTML = "Ajouter une équipe"
+      prepare();
+      $('#form_title').html('<%=res.getObject("add_a_team_text") %>');
+      $('#action_field').val("add");
+      $('#team_name_label').html('<%=res.getObject("name_text") %>');
     }
     function del(id, name) {
-      if (confirm("Êtes vous sûr de vouloir supprimer l'équipe \"" 
-                                                               + name + "\" ?")) {
-        document.getElementById("id_field").value = id;
-        document.getElementById("action_field").value = "delete";
-        document.getElementById("team_form").submit();
+      if (confirm("<%=res.getObject("delete_team_confirm") %> "
+                  + "&quot;" + name + "&quot; ?")) {
+        $('#action_field').val("delete");
+        $('#id_field').val(id);
+        $('#team_form').submit();
       }
     }
+    function send(id, name) {
+      $('#B option, #C option').each(function(i) {
+        $(this).attr('selected', "selected");
+      });
+      $('#team_form').submit();
+    }
+  </script>
+  
+  <!-- REFILLING OF FORM IF NECESSARY   -->
+  <script type="text/javascript">
+  <% 
+    out.println("$('#action_field').val('" + action + "');");
+    out.println("$('#id_field').val('" + team_id + "');");
+    out.println("$('#name_field').val('" + team_name + "');");
+    String[] managers = (String[]) request.getAttribute("reqmanagers");
+    if (managers != null)
+      for (int i = 0 ; i < managers.length ; i++)
+        out.println("$('#user" + managers[i] + "').remove().appendTo('#B');");
+    managers = (String[]) request.getAttribute("optmanagers");
+    if (managers != null)
+      for (int i = 0 ; i < managers.length ; i++)
+        out.println("$('#user" + managers[i] + "').remove().appendTo('#C');");
+  %>
   </script>
   
   <!-- LIST OF TEAMS -->
   <section>
-    <header>Liste des Equipes</header>
+    <header><%=res.getObject("teams_list_text") %></header>
     <table class="dataTable">
       <tr>
-        <th>Equipe</th>
-        <th>Supervisée par</th>
-        <th>Membres</th>
-        <th class="button"><input type="button" value="ajouter" 
+        <th><%=res.getObject("team_text") %></th>
+        <th><%=res.getObject("managed_by_text") %></th>
+        <th><%=res.getObject("members_text") %></th>
+        <th class="button"><input type="button" 
+            value="<%=res.getObject("add_text") %>" 
             onclick="Javascript:add();"></th>
       </tr>
-      <% 
+      <% // filling the table of teams
         for (int i = 0 ; i < teamslist.getSize() ; i++) {
           Team t = teamslist.getItem(i);
         %>
         <tr>
           <td><%=t.getName() %></td>
-          <td><%=teamManagers(t.getManagers(), userslist, t.getId()) %></td>
+          <td><%=teamManagers(request, t, userslist, res) %></td>
           <td><%=teamMembers(t.getId(), userslist) %></td>
-          <td class="button"><input type="button" value="modifier" 
+          <td class="button"><input type="button" 
+              value="<%=res.getObject("update_text") %>" 
             onclick="Javascript:upd(<%=t.getId() %>,'<%=t.getName() %>');"></td>
-          <td class="button"><input type="button" value="supprimer"
+          <td class="button"><input type="button"
+              value="<%=res.getObject("delete_text") %>"
             onclick="Javascript:del(<%=t.getId() %>,'<%=t.getName() %>');"></td>
         </tr>
         <%

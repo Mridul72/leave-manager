@@ -35,7 +35,15 @@ public class UsersList {
     add(query);
   }
   
-  public void addManagers(int team_id) {
+  public void addOptManagers(int team_id) {
+    addManagers(team_id, 'O');
+  }
+  
+  public void addReqManagers(int team_id) {
+    addManagers(team_id, 'R');
+  }
+  
+  private void addManagers(int team_id, char status) {
     Date now = new Date(System.currentTimeMillis());
     String q = "SELECT U.*, T.team_name, G.group_name, R.user_sid_replace " +
                  "FROM users U " +
@@ -49,7 +57,7 @@ public class UsersList {
                      "AND date_to > '" + now + "' " +
                  "WHERE U.user_id IN " +
                    "(SELECT user_sid FROM manage " +
-                     "WHERE team_sid = ? ) " +
+                     "WHERE team_sid = ? AND validation = '" + status + "') " +
                 "ORDER BY U.user_name, U.surname;";
     SafeQuery query = new SafeQuery();
     query.setPreparedquery(q);

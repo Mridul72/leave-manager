@@ -20,7 +20,8 @@ public class TeamsList {
         Team t = new Team();
         t.setId(rset.getInt("team_id"));
         t.setName(rset.getString("team_name"));
-        t.setManagers();
+        t.setOptManagers();
+        t.setReqManagers();
         teamslist.add(t);
       }
     } catch (SQLException ex) {

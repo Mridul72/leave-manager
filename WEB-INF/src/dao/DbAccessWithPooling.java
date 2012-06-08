@@ -168,9 +168,12 @@ public class DbAccessWithPooling {
   /**
    * Executes the given SQL query, which may be an INSERT, UPDATE, or DELETE 
    * query or an SQL query that returns nothing, such as an SQL DDL query.
-   * @param query the SQL query
-   * @return either (1) the row count for SQL Data Manipulation Language (DML) 
-   *         statements or (2) 0 for SQL statements that return nothing
+   * @param query   the SQL query
+   * @param withkey ask the auto-generated id or not
+   * @return if withkey == false either (1) the row count for SQL Data 
+   *         Manipulation Language (DML) statements or (2) 0 for SQL statements 
+   *         that return nothing
+   *         if withkey == true the auto-generated id
    */
   public int executeQuery(SafeQuery query, Boolean withkey) {
     if (pool == null) getDataSource();
@@ -178,7 +181,8 @@ public class DbAccessWithPooling {
     int nMaj = 0;
     try {
       conn = pool.getConnection();
-      stmt = conn.prepareStatement(query.getPreparedquery());
+      stmt = conn.prepareStatement(query.getPreparedquery(), 
+                                       PreparedStatement.RETURN_GENERATED_KEYS);
       for(int i = 0 ; i < query.getSize() ; i++) {
         if (query.getDataType(i).equals("String"))
           stmt.setString(i+1, (String) query.getData(i));

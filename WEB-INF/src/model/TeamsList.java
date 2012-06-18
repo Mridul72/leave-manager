@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import dao.DbAccessWithPooling;
+import dao.SafeQuery;
 
 public class TeamsList {
   
@@ -14,7 +15,7 @@ public class TeamsList {
     DbAccessWithPooling dbaccess = new DbAccessWithPooling();
     try {
       SafeQuery query = new SafeQuery();
-      query.setPreparedquery("SELECT * FROM teams ORDER by team_name;");
+      query.setPreparedQuery("SELECT * FROM teams ORDER by team_name;");
       ResultSet rset = dbaccess.askResultSet(query);
       while (rset.next()) {
         Team t = new Team();

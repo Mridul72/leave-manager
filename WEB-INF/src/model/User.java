@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import dao.DbAccessWithPooling;
+import dao.SafeQuery;
 
 public class User {
   int user_id = 0;
@@ -39,7 +40,7 @@ public class User {
                        "AND date_to > '" + now + "' " +
                      " WHERE U.login = ?;";
       SafeQuery query = new SafeQuery();
-      query.setPreparedquery(q);
+      query.setPreparedQuery(q);
       query.addArgument(login);
       ResultSet rset = dbaccess.askResultSet(query);
       rset.next();

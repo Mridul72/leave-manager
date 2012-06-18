@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import dao.DbAccessWithPooling;
+import dao.SafeQuery;
 
 public class Login {
   /**
@@ -20,7 +21,7 @@ public class Login {
     // acces database to check identifiers
     DbAccessWithPooling dbaccess = new DbAccessWithPooling();
     SafeQuery query = new SafeQuery();
-    query.setPreparedquery("SELECT * FROM users WHERE login = ? ;");
+    query.setPreparedQuery("SELECT * FROM users WHERE login = ? ;");
     query.addArgument(login);
     ResultSet rset = dbaccess.askResultSet(query);
     try {
@@ -47,6 +48,7 @@ public class Login {
    * @return         the encoded string as a string
    */
   private static String getMD5(String password) {
+    /* inspired by http://respawner.fr/blog/index.php?post/2008/09/03/Generation-d-un-MD5-avec-Java */
     byte[] uniqueKey = password.getBytes();
     byte[] hash      = null;
     

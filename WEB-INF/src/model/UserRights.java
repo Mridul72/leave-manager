@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import dao.DbAccessWithPooling;
+import dao.SafeQuery;
 
 public class UserRights {
   private int user_id;
@@ -20,7 +21,7 @@ public class UserRights {
     this.user_id = id;
     DbAccessWithPooling dbaccess = new DbAccessWithPooling();
     SafeQuery query = new SafeQuery();
-    query.setPreparedquery("SELECT * FROM users_rights WHERE user_sid = ? ;");
+    query.setPreparedQuery("SELECT * FROM users_rights WHERE user_sid = ? ;");
     query.addArgument(user_id);
     ResultSet rset = dbaccess.askResultSet(query);
     try {
@@ -58,7 +59,7 @@ public class UserRights {
     } 
     else if (dbaccess.askInt("users_rights","right_sid","user_sid",user_id)<0) {
       SafeQuery query = new SafeQuery();
-      query.setPreparedquery("INSERT INTO users_rights VALUES ( ? , ?);");
+      query.setPreparedQuery("INSERT INTO users_rights VALUES ( ? , ? );");
       query.addArgument(user_id);
       query.addArgument(right_id);
       if (dbaccess.executeQuery(query) == 0) return false;
@@ -75,7 +76,7 @@ public class UserRights {
   public boolean removeRight(int right_id) {
     DbAccessWithPooling dbaccess = new DbAccessWithPooling();
     SafeQuery query = new SafeQuery();
-    query.setPreparedquery("DELETE * INTO users_rights WHERE user_sid = ? " +
+    query.setPreparedQuery("DELETE * INTO users_rights WHERE user_sid = ? " +
                                                          "AND right_sid = ? ;");
     query.addArgument(user_id);
     query.addArgument(right_id);

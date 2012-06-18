@@ -27,95 +27,33 @@
   
   <jsp:include page="globalMenu.jsp" />
   
-  <%! // layout methods
-    String stringValue(String input, HttpServletRequest request) {
-      Object o = request.getAttribute(input);
-      return (o != null) ? o.toString() : "";
-    }
-    int intValue(String input, HttpServletRequest request) {
-      Object o = request.getAttribute(input);
-      return (o != null && !o.toString().equals("")) ?
-          Integer.valueOf(o.toString()) : 0;
-    }
-    String teamManagers(HttpServletRequest request,Team t,UsersList userslist,
-                        ResourceBundle res) {
-      String s = "";
-      String optids = "";
-      String reqids = "";
-      UsersList reqmanagers = t.getReqManagers();
-      UsersList optmanagers = t.getOptManagers();
-      int i;
-      for (i = 0 ; i < reqmanagers.getSize() ; i++) {
-        reqids += reqmanagers.getItem(i).getId() + ",";
-        s += manager(userslist, reqmanagers.getItem(i), res);
-      }
-      for (i = 0 ; i < optmanagers.getSize() ; i++) {
-        optids += optmanagers.getItem(i).getId() + ",";
-        s += manager(userslist, optmanagers.getItem(i), res);
-      }
-      if (s != "") s = s.substring(0, s.lastIndexOf(", "));
-      if (reqids != "") reqids = reqids.substring(0, reqids.lastIndexOf(","));
-      if (optids != "") optids = optids.substring(0, optids.lastIndexOf(","));
-      s += "<input type='hidden' id='reqmanagers" + t.getId() + "' ";
-      s += "value='[" + reqids + "]'>";
-      s += "<input type='hidden' id='optmanagers" + t.getId() + "' ";
-      s += "value='[" + optids + "]'>";
-      return s;
-    }
-    String manager(UsersList userslist, User manager, ResourceBundle res) {
-      String s = "";
-      s += manager.getSurname() + " " + manager.getName();
-      // if the manager is replaced
-      if (manager.getReplacement() != 0) {
-        User replacement = userslist.getUser(manager.getReplacement());
-        s += " <small>(" + res.getObject("replaced_by_text") + " ";
-        s += replacement.getSurname() + " ";
-        s += replacement.getName() + ")</small>";
-      }
-      return s + ", ";
-    }
-    String teamMembers(int team_id, UsersList userslist) {
-      String r = "";
-      for (int i = 0 ; i < userslist.getSize() ; i++) {
-        if (userslist.getItem(i).getTeamId() == team_id) {
-          r += userslist.getItem(i).getSurname() + " ";
-          r += userslist.getItem(i).getName() + ", ";
-        }
-      }
-      if (r != "") r = r.substring(0, r.lastIndexOf(", "));
-      return r;
-    }
-  %>
   <% // data recollection
     TeamsList teamslist = (TeamsList) request.getAttribute("teams");
     UsersList userslist = (UsersList) request.getAttribute("users");
-    int team_id = intValue("team_id", request);
-    String team_name = stringValue("team_name", request);
-    String action = stringValue("action", request);
-    if (action.equals("")) action = "add";
-    Object error = request.getAttribute("error");
+    String error = request.getAttribute("error").toString();
   %>
   
   <!-- FORM ADD/UPDATE TEAM -->
-  <section <%= (error != null) ? "" : "style='display:none;'" %>
-           id="form_section">
+  <section id="form_section"
+    <% if (error.equals("")) { %> style="display:none;" <% } %>>
     <header id="form_title"><%=res.getObject("add_a_team_text") %></header>
-    <%= (error != null)? "<p id='error'>" + error.toString() + "</p>" : 
-                         "<p id='error'></p>" %>
-    <form name="newteam" method="POST" action="teamsadmin.do" id="team_form">
-      <input type="hidden" name="action" value=""  id="action_field" />
-      <input type="hidden" name="team_id" value="" id="id_field" />
+    <p id="error"><%=error %></p>
+    
+    <form name="newteam" method="POST" action="teamsadmin.do" id="team_form" accept-charset ="utf-8">
+      <input type="hidden" name="action" id="action_field"
+             value="<%=request.getAttribute("action") %>" />
+      <input type="hidden" name="team_id" id="id_field"
+             value="<%=request.getAttribute("team_id") %>" />
       <label id="team_name_label"><%=res.getObject("name_text") %></label>
-      <input type="text" name="team_name" value="" id="name_field" />
+      <input type="text" name="team_name" value="" id="name_field" 
+             value="<%=request.getAttribute("team_name") %>" />
       <div class="MultiSelectTransfert">
         <select id="A" multiple>
         <% // filling the select with the list of users
           for (int i = 0 ; i < userslist.getSize() ; i++) {
             User u = userslist.getItem(i);
-            int id = u.getId();
-            out.print("<option id='user" + id + "' value='" + id + "'");
-            if (i % 2 != 0) out.print(" class='odd'");
-            out.print(">" + u.getName() + " " + u.getSurname() + "</option>");
+            out.print("<option id='user" + u.getId() + "' value='" + u.getId());
+            out.print("'>" + u.getName() + " " + u.getSurname() + "</option>");
           }
         %>
         </select>
@@ -168,11 +106,27 @@
     </form>
   </section>
   
+    
+  <!-- REFILLING OF FORM IF NECESSARY   -->
+  <script type="text/javascript">
+  <% 
+    String[] managers = (String[]) request.getAttribute("reqmanagers");
+    if (managers != null)
+      for (int i = 0 ; i < managers.length ; i++)
+        out.println("$('#user" + managers[i] + "').remove().appendTo('#B');");
+    managers = (String[]) request.getAttribute("optmanagers");
+    if (managers != null)
+      for (int i = 0 ; i < managers.length ; i++)
+        out.println("$('#user" + managers[i] + "').remove().appendTo('#C');");
+  %>
+  </script>
+  
   <!-- ACTIONS IN CASE OF ADD / UPDATE / DELETE -->
   <script type="text/javascript">
     function prepare() {
       $('#form_section').css('display','block');
       $('#error').css('display','none');
+      $('#name_field').val("");
       $('#B option, #C option').each(function(i) {
         $(this).remove().appendTo('#A');
       });
@@ -201,7 +155,7 @@
     }
     function del(id, name) {
       if (confirm("<%=res.getObject("delete_team_confirm") %> "
-                  + "&quot;" + name + "&quot; ?")) {
+                  + "\"" + name + "\" ?")) {
         $('#action_field').val("delete");
         $('#id_field').val(id);
         $('#team_form').submit();
@@ -215,22 +169,56 @@
     }
   </script>
   
-  <!-- REFILLING OF FORM IF NECESSARY   -->
-  <script type="text/javascript">
-  <% 
-    out.println("$('#action_field').val('" + action + "');");
-    out.println("$('#id_field').val('" + team_id + "');");
-    out.println("$('#name_field').val('" + team_name + "');");
-    String[] managers = (String[]) request.getAttribute("reqmanagers");
-    if (managers != null)
-      for (int i = 0 ; i < managers.length ; i++)
-        out.println("$('#user" + managers[i] + "').remove().appendTo('#B');");
-    managers = (String[]) request.getAttribute("optmanagers");
-    if (managers != null)
-      for (int i = 0 ; i < managers.length ; i++)
-        out.println("$('#user" + managers[i] + "').remove().appendTo('#C');");
+  <%! // layout methods
+    String teamManagers(HttpServletRequest request,Team t,UsersList userslist,
+                        ResourceBundle res) {
+      String s = "";
+      String optids = "";
+      String reqids = "";
+      UsersList reqmanagers = t.getReqManagers();
+      UsersList optmanagers = t.getOptManagers();
+      int i;
+      for (i = 0 ; i < reqmanagers.getSize() ; i++) {
+        reqids += reqmanagers.getItem(i).getId() + ",";
+        s += manager(userslist, reqmanagers.getItem(i), res);
+      }
+      for (i = 0 ; i < optmanagers.getSize() ; i++) {
+        optids += optmanagers.getItem(i).getId() + ",";
+        s += manager(userslist, optmanagers.getItem(i), res);
+      }
+      if (s != "") s = s.substring(0, s.lastIndexOf(", "));
+      if (reqids != "") reqids = reqids.substring(0, reqids.lastIndexOf(","));
+      if (optids != "") optids = optids.substring(0, optids.lastIndexOf(","));
+      s += "<input type='hidden' id='reqmanagers" + t.getId() + "' ";
+      s += "value='[" + reqids + "]'>";
+      s += "<input type='hidden' id='optmanagers" + t.getId() + "' ";
+      s += "value='[" + optids + "]'>";
+      return s;
+    }
+    String manager(UsersList userslist, User manager, ResourceBundle res) {
+      String s = "";
+      s += manager.getSurname() + " " + manager.getName();
+      // if the manager is replaced
+      if (manager.getReplacement() != 0) {
+        User replacement = userslist.getUser(manager.getReplacement());
+        s += " <small>(" + res.getObject("replaced_by_text") + " ";
+        s += replacement.getSurname() + " ";
+        s += replacement.getName() + ")</small>";
+      }
+      return s + ", ";
+    }
+    String teamMembers(int team_id, UsersList userslist) {
+      String r = "";
+      for (int i = 0 ; i < userslist.getSize() ; i++) {
+        if (userslist.getItem(i).getTeamId() == team_id) {
+          r += userslist.getItem(i).getSurname() + " ";
+          r += userslist.getItem(i).getName() + ", ";
+        }
+      }
+      if (r != "") r = r.substring(0, r.lastIndexOf(", "));
+      return r;
+    }
   %>
-  </script>
   
   <!-- LIST OF TEAMS -->
   <section>
@@ -252,12 +240,14 @@
           <td><%=t.getName() %></td>
           <td><%=teamManagers(request, t, userslist, res) %></td>
           <td><%=teamMembers(t.getId(), userslist) %></td>
+          <% if (t.getId() != 1) { %>
           <td class="button"><input type="button" 
               value="<%=res.getObject("update_text") %>" 
             onclick="Javascript:upd(<%=t.getId() %>,'<%=t.getName() %>');"></td>
           <td class="button"><input type="button"
               value="<%=res.getObject("delete_text") %>"
             onclick="Javascript:del(<%=t.getId() %>,'<%=t.getName() %>');"></td>
+          <% } %>
         </tr>
         <%
         }

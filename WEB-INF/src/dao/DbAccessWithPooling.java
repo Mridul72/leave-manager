@@ -4,7 +4,6 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
-import model.SafeQuery;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -41,7 +40,28 @@ public class DbAccessWithPooling {
    * @return the data to obtain
    */
   public String askString(String table, String target, String source, int val) {
-    return askString(table, target, source, String.valueOf(val));
+    if (pool == null) getDataSource();
+    String result = null;
+    try {
+      conn = pool.getConnection();
+      stmt = conn.prepareStatement("SELECT " + target + " FROM " + table + 
+                                   " WHERE " + source + " = ?");
+      stmt.setInt(1, val);
+      rset = stmt.executeQuery();
+      if (rset.next()) result = rset.getString(target);
+    } catch (SQLException ex) {
+      System.err.println(ex.getMessage());
+    } catch (NullPointerException ex) {
+      System.err.println("echec : pas de connexion");
+    } finally {
+      try {
+        if (stmt != null) stmt.close();
+        if (conn != null) conn.close(); // return to pool
+      } catch (SQLException ex) {
+        System.err.println(ex.getMessage());
+      }
+    }
+    return result;
   }
   /**
    * Get a String from the database with a query of type: 
@@ -57,13 +77,45 @@ public class DbAccessWithPooling {
     String result = null;
     try {
       conn = pool.getConnection();
-      stmt = conn.prepareStatement("SELECT ? FROM ? WHERE ? = ?");
-      stmt.setString(1, target); 
-      stmt.setString(2, tab);
-      stmt.setString(3, source);
-      stmt.setString(4, val);
+      stmt = conn.prepareStatement("SELECT " + target + " FROM " + tab + 
+          " WHERE " + source + " = ?");
+      stmt.setString(1, val);
       rset = stmt.executeQuery();
       if (rset.next()) result = rset.getString(target);
+    } catch (SQLException ex) {
+      System.err.println(ex.getMessage());
+    } catch (NullPointerException ex) {
+      System.err.println("echec : pas de connexion");
+    } finally {
+      try {
+        if (stmt != null) stmt.close();
+        if (conn != null) conn.close(); // return to pool
+      } catch (SQLException ex) {
+        System.err.println(ex.getMessage());
+      }
+    }
+    return result;
+  }
+  
+  /**
+   * Get an int from the database with a query of type: 
+   * SELECT target FROM table WHERE source=value
+   * @param table  the table in which to search information
+   * @param target  the name of the column where is the data to obtain
+   * @param source the name of the column containing the value to search
+   * @param value the searched value in the source column
+   * @return the data to obtain
+   */
+  public int askInt(String table, String target, String source, int value) {
+    if (pool == null) getDataSource();
+    int result = 0;
+    try {
+      conn = pool.getConnection();
+      stmt = conn.prepareStatement("SELECT " + target + " FROM " + table + 
+          " WHERE " + source + " = ?");
+      stmt.setInt(1, value);
+      rset = stmt.executeQuery();
+      if (rset.next()) result = rset.getInt(target);
     } catch (SQLException ex) {
       System.err.println(ex.getMessage());
     } catch (NullPointerException ex) {
@@ -87,28 +139,14 @@ public class DbAccessWithPooling {
    * @param value the searched value in the source column
    * @return the data to obtain
    */
-  public int askInt(String table, String target, String source, int value) {
-    return askInt(table, target, source, String.valueOf(value));
-  }
-  /**
-   * Get an int from the database with a query of type: 
-   * SELECT target FROM table WHERE source=value
-   * @param table  the table in which to search information
-   * @param target  the name of the column where is the data to obtain
-   * @param source the name of the column containing the value to search
-   * @param value the searched value in the source column
-   * @return the data to obtain
-   */
   public int askInt(String table, String target, String source, String value) {
     if (pool == null) getDataSource();
     int result = 0;
     try {
       conn = pool.getConnection();
-      stmt = conn.prepareStatement("SELECT ? FROM ? WHERE ? = ?");
-      stmt.setString(1, target);
-      stmt.setString(2, table);
-      stmt.setString(3, source);
-      stmt.setString(4, value);
+      stmt = conn.prepareStatement("SELECT " + target + " FROM " + table + 
+          " WHERE " + source + " = ?");
+      stmt.setString(1, value);
       rset = stmt.executeQuery();
       if (rset.next()) result = rset.getInt(target);
     } catch (SQLException ex) {
@@ -137,7 +175,7 @@ public class DbAccessWithPooling {
     if (pool == null) getDataSource();
     try {
       conn = pool.getConnection();
-      stmt = conn.prepareStatement(query.getPreparedquery());
+      stmt = conn.prepareStatement(query.getPreparedQuery());
       for(int i = 0 ; i < query.getSize() ; i++) {
         if (query.getDataType(i).equals("String"))
           stmt.setString(i+1, (String) query.getData(i));
@@ -181,7 +219,7 @@ public class DbAccessWithPooling {
     int nMaj = 0;
     try {
       conn = pool.getConnection();
-      stmt = conn.prepareStatement(query.getPreparedquery(), 
+      stmt = conn.prepareStatement(query.getPreparedQuery(), 
                                        PreparedStatement.RETURN_GENERATED_KEYS);
       for(int i = 0 ; i < query.getSize() ; i++) {
         if (query.getDataType(i).equals("String"))
@@ -193,8 +231,7 @@ public class DbAccessWithPooling {
       }
       nMaj = stmt.executeUpdate();
       rset = stmt.getGeneratedKeys();
-      if (withkey && rset != null) {
-        rset.next();
+      if (withkey && rset.first()) {
         key = rset.getInt(1);
       }
     } catch (SQLException ex) {

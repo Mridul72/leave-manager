@@ -1,6 +1,7 @@
 package model;
 
 import dao.DbAccessWithPooling;
+import dao.SafeQuery;
 
 public class Team {
   private int team_id = 1;
@@ -21,7 +22,7 @@ public class Team {
   public void addTeamIntoDB() {
     DbAccessWithPooling dbaccess = new DbAccessWithPooling();
     SafeQuery query = new SafeQuery();
-    query.setPreparedquery("INSERT INTO teams VALUES (null, ?);");
+    query.setPreparedQuery("INSERT INTO teams VALUES (null, ?);");
     query.addArgument(team_name);
     team_id = dbaccess.executeQuery(query, true);
     addManagerIntoDB(query, dbaccess);
@@ -30,12 +31,12 @@ public class Team {
   public void updateTeamIntoDB() {
     DbAccessWithPooling dbaccess = new DbAccessWithPooling();
     SafeQuery query = new SafeQuery();
-    query.setPreparedquery("UPDATE teams SET team_name = ? WHERE team_id = ?;");
+    query.setPreparedQuery("UPDATE teams SET team_name = ? WHERE team_id = ?;");
     query.addArgument(team_name);
     query.addArgument(team_id);
     dbaccess.executeQuery(query);
     query.reset();
-    query.setPreparedquery("DELETE FROM manage WHERE team_sid = ?;");
+    query.setPreparedQuery("DELETE FROM manage WHERE team_sid = ?;");
     query.addArgument(team_id);
     dbaccess.executeQuery(query);
     addManagerIntoDB(query, dbaccess);
@@ -46,7 +47,7 @@ public class Team {
     for (int i = 0 ; i < optmanagerslist.getSize() ; i++) {
       user_id = optmanagerslist.getItem(i).getId();
       query.reset();
-      query.setPreparedquery("INSERT INTO manage VALUES ( ? , ?, 'O' );");
+      query.setPreparedQuery("INSERT INTO manage VALUES ( ? , ?, 'O' );");
       query.addArgument(user_id);
       query.addArgument(team_id);
       dbaccess.executeQuery(query);
@@ -54,11 +55,21 @@ public class Team {
     for (int i = 0 ; i < reqmanagerslist.getSize() ; i++) {
       user_id = reqmanagerslist.getItem(i).getId();
       query.reset();
-      query.setPreparedquery("INSERT INTO manage VALUES ( ? , ?, 'R' );");
+      query.setPreparedQuery("INSERT INTO manage VALUES ( ? , ?, 'R' );");
       query.addArgument(user_id);
       query.addArgument(team_id);
       dbaccess.executeQuery(query);
     }
+  }
+  
+  public static void delete(int team_id) {
+    DbAccessWithPooling dbaccess = new DbAccessWithPooling();
+    SafeQuery query = new SafeQuery();
+    query.setPreparedQuery("DELETE FROM teams WHERE team_id = ? ;");
+    query.addArgument(team_id);
+    dbaccess.executeQuery(query);
+    query.setPreparedQuery("DELETE FROM manage WHERE team_sid = ? ;");
+    dbaccess.executeQuery(query);
   }
   
   public int getId() {
@@ -101,15 +112,5 @@ public class Team {
 
   public UsersList getReqManagers() {
     return reqmanagerslist;
-  }
-
-  public static void delete(int team_id) {
-    DbAccessWithPooling dbaccess = new DbAccessWithPooling();
-    SafeQuery query = new SafeQuery();
-    query.setPreparedquery("DELETE FROM teams WHERE team_id = ? ;");
-    query.addArgument(team_id);
-    dbaccess.executeQuery(query);
-    query.setPreparedquery("DELETE FROM manage WHERE team_sid = ? ;");
-    dbaccess.executeQuery(query);
   }
 }

@@ -1,4 +1,4 @@
-package model;
+package dao;
 
 import java.sql.Date;
 import java.util.ArrayList;
@@ -16,11 +16,11 @@ public class SafeQuery {
     datatypes.clear();
   }
   
-  public void setPreparedquery(String query) {
+  public void setPreparedQuery(String query) {
     preparedquery = query;
   }
   
-  public String getPreparedquery() {
+  public String getPreparedQuery() {
     return preparedquery;
   }
   
@@ -44,10 +44,16 @@ public class SafeQuery {
   }
   
   public Object getData(int i) {
-    return datalist.get(i);
+    try {
+      return datalist.get(i);
+    } catch (IndexOutOfBoundsException ex) {}
+    return null;
   }
   
   public String getDataType(int i) {
-    return datatypes.get(i);
+    try {
+      return datatypes.get(i);
+    } catch (IndexOutOfBoundsException ex) {}
+    return null;
   }
 }

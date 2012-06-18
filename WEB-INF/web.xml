@@ -11,7 +11,7 @@ Release date : 06/2012
                       http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
   version="3.0"
   metadata-complete="true">
-
+  
   <resource-ref>
     <description>DB Connection Pool</description>
     <res-ref-name>jdbc/leaveManagerDB</res-ref-name>
@@ -24,8 +24,7 @@ Release date : 06/2012
     <display-name>SecureConnection</display-name>
     <web-resource-collection>
       <web-resource-name>SecureConnection</web-resource-name>
-      <url-pattern>/truc</url-pattern>
-      <!--  <url-pattern>/showhome.do</url-pattern> -->
+      <url-pattern>/*</url-pattern>
       <http-method>GET</http-method>
       <http-method>POST</http-method>
     </web-resource-collection>
@@ -35,13 +34,26 @@ Release date : 06/2012
   </security-constraint>
 
   <filter>
+    <filter-name>CharsetEncodingFilter</filter-name>
+    <filter-class>filter.CharsetEncodingFilter</filter-class>
+  </filter>
+  
+  <filter>
     <filter-name>FLogin</filter-name>
     <filter-class>filter.FLogin</filter-class>
     <init-param>
       <param-name>avoid-urls</param-name>
-      <param-value>/index.jsp,/checklogin.do,/styles.css,/img/leaveManagerIcon.png,/jquery-1.7.1.min.js</param-value>
+      <param-value>/index.jsp,/checklogin.do,/styles.css,/img/leaveManagerIcon.png,/jquery-1.7.1.min.js,/test</param-value>
     </init-param>
   </filter>
+
+  <filter-mapping>
+    <filter-name>CharsetEncodingFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+    <dispatcher>REQUEST</dispatcher>
+    <dispatcher>FORWARD</dispatcher>
+    <dispatcher>INCLUDE</dispatcher>
+  </filter-mapping>
 
   <filter-mapping>
     <filter-name>FLogin</filter-name>
@@ -76,6 +88,10 @@ Release date : 06/2012
     <servlet-class>servlet.STeamsAdmin</servlet-class>
   </servlet>
   
+  <servlet>
+    <servlet-name>junit_test</servlet-name>
+    <servlet-class>junit.STest</servlet-class>
+  </servlet>
   
   <servlet-mapping>
     <servlet-name>SUserStats</servlet-name>
@@ -101,5 +117,10 @@ Release date : 06/2012
   <servlet-mapping>
     <servlet-name>STeamsAdmin</servlet-name>
     <url-pattern>/teamsadmin.do</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>junit_test</servlet-name>
+    <url-pattern>/test</url-pattern>
   </servlet-mapping>
 </web-app>

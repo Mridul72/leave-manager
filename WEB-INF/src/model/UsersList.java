@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import dao.DbAccessWithPooling;
+import dao.SafeQuery;
 
 public class UsersList {
   
@@ -31,7 +32,7 @@ public class UsersList {
                      "AND date_to > '" + now + "' " +
                 "ORDER BY U.user_name, U.surname;";
     SafeQuery query = new SafeQuery();
-    query.setPreparedquery(q);
+    query.setPreparedQuery(q);
     add(query);
   }
   
@@ -60,7 +61,7 @@ public class UsersList {
                      "WHERE team_sid = ? AND validation = '" + status + "') " +
                 "ORDER BY U.user_name, U.surname;";
     SafeQuery query = new SafeQuery();
-    query.setPreparedquery(q);
+    query.setPreparedQuery(q);
     query.addArgument(team_id);
     add(query);
   }

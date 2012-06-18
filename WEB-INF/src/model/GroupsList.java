@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import dao.DbAccessWithPooling;
+import dao.SafeQuery;
 
 public class GroupsList {
   
@@ -15,7 +16,7 @@ public class GroupsList {
     try {
       dbaccess = new DbAccessWithPooling();
       SafeQuery query = new SafeQuery();
-      query.setPreparedquery("SELECT * FROM groups;");
+      query.setPreparedQuery("SELECT * FROM groups;");
       ResultSet rset = dbaccess.askResultSet(query);
       while (rset.next()) {
         Group g = new Group();

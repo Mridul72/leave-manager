@@ -19,81 +19,81 @@ public class STeamsAdmin extends HttpServlet {
 
   protected void doGet(HttpServletRequest req, HttpServletResponse resp)
       throws ServletException, IOException {
-    
+    // set language
     Locale locale = req.getLocale(); 
     ResourceBundle res = ResourceBundle.getBundle("lang.LMTexts", locale);
-    Object action = req.getParameter("action");
+    // data recollection
+    Object o = req.getParameter("action");
+    String action = (o != null) ? o.toString() : "";
+    o = req.getParameter("team_id");
+    int team_id = (o != null) ? Integer.valueOf(o.toString()) : 0;
+    o = req.getParameter("team_name");
+    String team_name = (o != null) ? o.toString() : "";
+    String error = "";
+    // refresh usersList
     UsersList users = new UsersList();
     users.addAll();
     req.setAttribute("users", users);
-    
-    if (action != null && action.toString().equals("delete")) {
-      int team_id = Integer.valueOf(req.getParameter("team_id"));
-      if (team_id == 1) {
-        req.setAttribute("error", res.getObject("delete_default_error"));
-        redirect(req, resp);
-      }
+    // DELETE
+    if (action.toString().equals("delete")) {
+      if (team_id == 1)
+        error = res.getObject("delete_default_error").toString();
       for (int i = 0 ; i < users.getSize() ; i ++) {
-        if (users.getItem(i).getTeamId() == team_id) {
-          req.setAttribute("error", res.getObject("delete_used_error"));
-          redirect(req, resp);
-        }
+        if (users.getItem(i).getTeamId() == team_id)
+          error = res.getObject("delete_used_error").toString();
       }
-      Team.delete(team_id);
-    }
-    else if (action != null && action.toString().equals("update")) {
-      int team_id = Integer.valueOf(req.getParameter("team_id"));
-      if (team_id == 1) {
-        req.setAttribute("error", res.getObject("update_default_error"));
-        redirect(req, resp);
+      if (error.equals("")) {
+        Team.delete(team_id);
+        team_id = 0;
+        team_name = "";
+        action = "";
       }
-      String team_name = req.getParameter("team_name");
-      if (!verif(team_name, req, resp, res)) return;
-      Team team = new Team();
-      team.setId(team_id);
-      team.setName(team_name);
-      collectManagers(req, team, users);
-      team.updateTeamIntoDB();
     }
-    else if (action != null && action.toString().equals("add")) {
-      String team_name = req.getParameter("team_name");
-      if (!verif(team_name, req, resp, res)) return;
-      Team team = new Team();
-      team.setName(team_name);
-      collectManagers(req, team, users);
-      team.addTeamIntoDB();
+    // UPDATE
+    else if (action.toString().equals("update")) {
+      if (team_id == 1)
+        error = res.getObject("update_default_error").toString();
+      else error = verif(team_name, res);
+      if (error.equals("")) {
+        Team team = new Team();
+        team.setId(team_id);
+        team.setName(team_name);
+        collectManagers(req, team, users);
+        team.updateTeamIntoDB();
+        team_id = 0;
+        team_name = "";
+        action = "";
+      }
     }
-
-    redirect(req, resp);
-  }
-
-  private boolean verif(String team_name, HttpServletRequest req, 
-                        HttpServletResponse resp, ResourceBundle res) {
-
-    String expreg = "[\\p{Alnum}-']{3,}";
-    if (!team_name.matches(expreg)) {
-      if (team_name.length() < 3)
-        req.setAttribute("error", res.getObject("name_too_short_error"));
-      else
-        req.setAttribute("error", res.getObject("wrong_chars_error"));
-      
-      req.setAttribute("action", req.getParameter("action"));
-      req.setAttribute("team_id", req.getParameter("team_id"));
-      req.setAttribute("team_name", req.getParameter("team_name"));
+    // ADD
+    else if (action.toString().equals("add")) {
+      error = verif(team_name, res);
+      if (error.equals("")) {
+        Team team = new Team();
+        team.setName(team_name);
+        collectManagers(req, team, users);
+        team.addTeamIntoDB();
+        team_id = 0;
+        team_name = "";
+        action = "";
+      }
+    }
+    // set Attributes
+    req.setAttribute("action", action);
+    req.setAttribute("team_id", team_id);
+    req.setAttribute("team_name", team_name);
+    if (!action.toString().equals("")) {
       String[] optmanagers = req.getParameterValues("optmanagers");
       req.setAttribute("optmanagers", optmanagers);
       String[] reqmanagers = req.getParameterValues("reqmanagers");
       req.setAttribute("reqmanagers", reqmanagers);
-      redirect(req, resp);
-      return false;
     }
-    return true;
-  }
-  
-  private void redirect(HttpServletRequest req, HttpServletResponse resp) {
+    req.setAttribute("error", error);
+    // refresh teamList
+    TeamsList teams = new TeamsList();
+    req.setAttribute("teams", teams);
+    // send to JSP
     try {
-      TeamsList teams = new TeamsList();
-      req.setAttribute("teams", teams);
       RequestDispatcher dispatch = req.getRequestDispatcher("teamsAdmin.jsp");
       dispatch.forward(req, resp);
     } catch (IOException ex) {
@@ -101,6 +101,23 @@ public class STeamsAdmin extends HttpServlet {
     } catch (ServletException ex) {
       System.err.println(ex.getMessage());
     }
+  }
+
+  protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+      throws ServletException, IOException {
+  
+    doGet(req, resp);
+  }
+  
+  private String verif(String team_name, ResourceBundle res) {
+    String expreg = "[\\p{Alnum}- àáâãäåçèéêëìíîïðòóôõöùúûüýÿ']{3,}";
+    if (!team_name.matches(expreg)) {
+      if (team_name.length() < 3)
+        return res.getObject("name_too_short_error").toString();
+      else
+        return res.getObject("wrong_chars_error").toString();
+    }
+    return "";
   }
   
   private void collectManagers(HttpServletRequest req, Team team, 
@@ -123,11 +140,5 @@ public class STeamsAdmin extends HttpServlet {
         optmanagers.addUser(u);
       }
     team.setOptManagers(optmanagers);
-  }
-  
-  protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-      throws ServletException, IOException {
-  
-    doGet(req, resp);
   }
 }
